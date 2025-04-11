@@ -1,0 +1,11 @@
+- name: Install K3s on master
+  hosts: masters
+  become: true
+  roles:
+    - xanmanning.k3s
+
+# - name: Install K3s on agents
+#   hosts: agents
+#   become: true
+#   roles:
+#     - xanmanning.k3s

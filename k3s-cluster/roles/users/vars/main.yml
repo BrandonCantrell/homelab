@@ -1,0 +1,5 @@
+user_accounts:
+  - name: bcant
+    shell: /bin/bash
+    groups: ["sudo"]
+    pubkey_file: "files/bcant.pub"

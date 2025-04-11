@@ -1,0 +1,4 @@
+- import_playbook: bootstrap.yml
+- import_playbook: users.yml
+# - import_playbook: install_k3s.yml
+# - import_playbook: install_argocd.yml

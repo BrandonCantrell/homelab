@@ -1,0 +1,57 @@
+
+- name: Bootstrap system and users
+  hosts: all
+  become: true
+  vars:
+    git_user_email: "bcantr3ll@gmail.com"
+    git_user_name: "BrandonCantrell"
+  roles:
+    - pi_system_prep
+  tasks:
+
+    # === USER SETUP ===
+
+    - name: Create ansible user
+      user:
+        name: ansible
+        shell: /bin/bash
+        create_home: yes
+
+    - name: Add SSH key for ansible user
+      authorized_key:
+        user: ansible
+        key: "{{ lookup('file', '../files/ansible.pub') }}"
+
+    - name: Allow ansible user passwordless sudo
+      copy:
+        dest: /etc/sudoers.d/ansible
+        content: "ansible ALL=(ALL) NOPASSWD: ALL\n"
+        mode: '0440'
+  
+    # === GIT CONFIG ===
+
+    - name: Setup editor
+      git_config:
+        name: core.editor
+        scope: global
+        value: nano
+
+    - name: Setup email
+      git_config:
+        name: user.email
+        scope: global
+        value: "{{ git_user_email }}"
+
+    - name: Setup name
+      git_config:
+        name: user.name
+        scope: global
+        value: "{{ git_user_name }}"
+
+
+  handlers:
+    - name: Reboot if required
+      reboot:
+        msg: "Rebooting to apply kernel/cgroup changes"
+        connect_timeout: 5
+        reboot_timeout: 300

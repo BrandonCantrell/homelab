@@ -1,0 +1,22 @@
+- name: Ensure user accounts exist
+  user:
+    name: "{{ item.name }}"
+    shell: "{{ item.shell }}"
+    groups: "{{ item.groups | default([]) }}"
+    append: true
+    create_home: true
+  loop: "{{ user_accounts }}"
+
+- name: Add SSH keys for users
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ lookup('file', '../files/bcant.pub') }}"
+  loop: "{{ user_accounts }}"
+
+
+- name: Allow users passwordless sudo
+  copy:
+    dest: "/etc/sudoers.d/{{ item.name }}"
+    content: "{{ item.name }} ALL=(ALL) NOPASSWD: ALL\n"
+    mode: '0440'
+  loop: "{{ user_accounts }}"

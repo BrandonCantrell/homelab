@@ -1,0 +1,17 @@
+- name: Install Argo CD using local system
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+    - name: Create argocd namespace
+      kubernetes.core.k8s:
+        name: argocd
+        api_version: v1
+        kind: Namespace
+        state: present
+
+    - name: Install Argo CD from upstream manifest
+      kubernetes.core.k8s:
+        src: https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        state: present
+        namespace: argocd

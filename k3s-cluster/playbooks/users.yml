@@ -1,0 +1,5 @@
+- name: Add user accounts
+  hosts: all
+  become: true
+  roles:
+    - users

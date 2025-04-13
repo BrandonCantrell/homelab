@@ -10,16 +10,12 @@ spec:
     targetRevision: HEAD
     path: k3s-cluster/kube-apps/charts/nginx
     helm:
-      values: |
-        replicaCount: 1
-        ingress:
-          enabled: true
-          host: nginx.local
-
+      valueFiles:
+        - values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: default
   syncPolicy:
     automated:
-      prune: true
       selfHeal: true
+      prune: true

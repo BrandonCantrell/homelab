@@ -1,0 +1,5 @@
+replicaCount: 1
+
+ingress:
+  enabled: true
+  host: nginx.local

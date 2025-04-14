@@ -10,5 +10,3 @@ all:
     #   hosts:
     #     k3s-agent-1:
     #       ansible_host: 192.168.1.11
-    #     k3s-agent-2:
-    #       ansible_host: 192.168.1.12

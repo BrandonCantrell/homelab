@@ -5,14 +5,17 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
-    repoURL: https://github.com/BrandonCantrell/homelab.git
-    targetRevision: HEAD
-    path: k3s-cluster/kube-apps/manifests/metallb
   destination:
-    server: https://kubernetes.default.svc
     namespace: metallb-system
+    server: https://kubernetes.default.svc
+  source:
+    repoURL: https://metallb.github.io/metallb
+    chart: metallb
+    targetRevision: 0.14.6
+    helm:
+      valueFiles:
+        - ../manifests/metallb/values.yaml
   syncPolicy:
     automated:
-      selfHeal: true
       prune: true
+      selfHeal: true

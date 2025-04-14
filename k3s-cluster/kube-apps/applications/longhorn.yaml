@@ -13,10 +13,10 @@ spec:
   source:
     repoURL: https://charts.longhorn.io
     chart: longhorn
-    targetRevision: 1.5.3
+    targetRevision: 1.8.1
     helm:
       values: |
-        preUpgradeChecks:
+        preUpgradeChecker:
           enabled: false
 
         persistence:
@@ -29,4 +29,3 @@ spec:
     automated:
       prune: true
       selfHeal: true
-

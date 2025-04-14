@@ -13,7 +13,7 @@ spec:
     helm:
       parameters:
         - name: controller.service.type
-          value: NodePort
+          value: LoadBalancer
   destination:
     server: https://kubernetes.default.svc
     namespace: ingress-nginx

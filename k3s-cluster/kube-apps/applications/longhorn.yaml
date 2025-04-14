@@ -16,7 +16,7 @@ spec:
     targetRevision: 1.5.3
     helm:
       values: |
-        preUpgradeCheck:
+        preUpgradeChecks:
           enabled: false
 
         persistence:

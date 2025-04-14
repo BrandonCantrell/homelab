@@ -1,23 +1,26 @@
-# kube-apps/applications/ingress-nginx.yaml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: ingress-nginx
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   project: default
+  destination:
+    namespace: ingress-nginx
+    server: https://kubernetes.default.svc
   source:
     repoURL: https://kubernetes.github.io/ingress-nginx
     chart: ingress-nginx
-    targetRevision: 4.10.1
+    targetRevision: 4.12.1
     helm:
-      parameters:
-        - name: controller.service.type
-          value: LoadBalancer
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: ingress-nginx
+      values: |
+        controller:
+          service:
+            type: LoadBalancer
+
   syncPolicy:
     automated:
-      selfHeal: true
       prune: true
+      selfHeal: true

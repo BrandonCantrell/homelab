@@ -35,7 +35,7 @@ controller:
 # Enable the ingress to expose Homepage to the network.
 ingress:
   main:
-    enabled: false
+    enabled: true
     labels:
       # This label will enable discover of this deployment in Homepage
       gethomepage.dev/enabled: "true"
@@ -72,7 +72,7 @@ config:
             description: Homepage is awesome
 
     - My Second Group:
-        - My Second Service:
+        - My Second Service Brandon is best:
             href: http://localhost/
             description: Homepage is the best
 

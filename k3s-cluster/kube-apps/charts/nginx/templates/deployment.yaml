@@ -1,7 +1,10 @@
+# kube-apps/charts/nginx/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginx
+  labels:
+    app: nginx
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -14,6 +17,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx:1.21
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: 80

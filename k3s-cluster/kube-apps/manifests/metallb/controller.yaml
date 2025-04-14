@@ -18,7 +18,7 @@ spec:
       serviceAccountName: metallb-controller
       containers:
         - name: controller
-          image: quay.io/metallb/controller@sha256:1c6c03a0ed7d229d57ab3f8c5b8b2c5e0c6b3d30cf0ffbe18d1e6dd5f5c69b4d
+          image: quay.io/metallb/controller:v0.13.10
           args: ["controller"]
           resources:
             requests:

@@ -17,7 +17,7 @@ spec:
     helm:
       values: |
         preUpgradeChecker:
-          enabled: false
+          jobEnabled: false
 
         persistence:
           defaultClass: true

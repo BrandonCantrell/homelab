@@ -1,5 +1,8 @@
 replicaCount: 1
 
+ingress:
+  enabled: false
+
 controller:
   service:
     type: LoadBalancer

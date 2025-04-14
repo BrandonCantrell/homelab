@@ -8,14 +8,17 @@ spec:
   destination:
     namespace: homepage
     server: https://kubernetes.default.svc
-  source:
-    chart: homepage
-    repoURL: https://jameswynn.github.io/helm-charts
-    targetRevision: 2.0.2            
-    path: .                          
-    helm:
-      valueFiles:
-        - values.yaml
+  sources:
+    - repoURL: https://jameswynn.github.io/helm-charts
+      chart: homepage
+      targetRevision: 2.0.2            
+      path: .                          
+      helm:
+        valueFiles:
+          - $values/k3s-cluster/kube-apps/homepage/values.yaml
+    - repoURL: https://github.com/BrandonCantrell/homelab.git  
+      targetRevision: main
+      ref: values  # Maps to $values variable
   syncPolicy:
     automated:
       prune: true

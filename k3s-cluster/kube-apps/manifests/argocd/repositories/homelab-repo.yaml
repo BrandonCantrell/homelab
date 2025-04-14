@@ -1,0 +1,11 @@
+# homelab/k3s-cluster/kube-apps/manifests/argocd/repositories/homelab-repo.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: homelab-repo
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  url: https://github.com/BrandonCantrell/homelab.git
+  type: git

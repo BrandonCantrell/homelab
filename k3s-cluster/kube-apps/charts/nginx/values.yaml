@@ -1,5 +1,6 @@
 replicaCount: 1
 
-ingress:
-  enabled: true
-  host: nginx.local
+controller:
+  service:
+    type: LoadBalancer
+    loadBalancerIP: 192.168.4.20

@@ -1,6 +1,5 @@
-configInline:
-  address-pools:
-    - name: default
-      protocol: layer2
-      addresses:
-        - 192.168.4.20-192.168.4.30
+controller:
+  enabled: true
+
+speaker:
+  enabled: true

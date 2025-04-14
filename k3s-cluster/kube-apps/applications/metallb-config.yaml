@@ -12,7 +12,7 @@ spec:
     server: https://kubernetes.default.svc
   source:
     path: kube-apps/manifests/metallb
-    repoURL: https://github.com/your-user-or-org/homelab.git
+    repoURL: https://github.com/BrandonCantrell/homelab.git
     targetRevision: HEAD
     directory:
       recurse: true

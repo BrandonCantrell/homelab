@@ -25,6 +25,16 @@ spec:
 
         defaultSettings:
           defaultReplicaCount: 1
+
+        ingress:
+          enabled: true
+          host: longhorn.homelab
+          path: /
+          annotations:
+            nginx.ingress.kubernetes.io/rewrite-target: /
+          ingressClassName: nginx
+
+
   syncPolicy:
     automated:
       prune: true

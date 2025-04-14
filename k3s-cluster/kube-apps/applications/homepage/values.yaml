@@ -14,10 +14,7 @@ extraClusterRoles:
   #   - get
 
 serviceAccount:
-  # Specify a different service account name. When blank it will default to the release
-  # name if *create* is enabled, otherwise it will refer to the default service account.
   name: ""
-  # Create service account. Needed when RBAC is enabled.
   create: false
 
 service:
@@ -37,10 +34,8 @@ ingress:
   main:
     enabled: true
     labels:
-      # This label will enable discover of this deployment in Homepage
       gethomepage.dev/enabled: "true"
     annotations:
-      # These annotations will configure how this deployment is shown in Homepage
       gethomepage.dev/name: "Homepage"
       gethomepage.dev/description: "A modern, secure, highly customizable application dashboard."
       gethomepage.dev/group: "A New Group"
@@ -51,14 +46,9 @@ ingress:
         paths:
           - path: /
             pathType: Prefix
-    tls:
-      - hosts:
-          - *host
+    tls: []
 
-# All the config files for Homepage can be specified under their relevant config block.
 config:
-  # To use an existing ConfigMap uncomment this line and specify the name
-  # useExistingConfigMap: existing-homepage-configmap
   bookmarks:
     - Developer:
         - Github:
@@ -72,7 +62,7 @@ config:
             description: Homepage is awesome
 
     - My Second Group:
-        - My Second Service Brandon is best:
+        - My Second Service:
             href: http://localhost/
             description: Homepage is the best
 
@@ -82,7 +72,6 @@ config:
             description: Homepage is 😎
   widgets:
     - resources:
-        # change backend to 'kubernetes' to use Kubernetes integration. Requires RBAC.
         backend: resources
         expanded: true
         cpu: true
@@ -90,28 +79,9 @@ config:
     - search:
         provider: duckduckgo
         target: _blank
-    # ## Uncomment to enable Kubernetes integration
-    # - kubernetes:
-    #     cluster:
-    #       show: true
-    #       cpu: true
-    #       memory: true
-    #       showLabel: true
-    #       label: "cluster"
-    #     nodes:
-    #       show: true
-    #       cpu: true
-    #       memory: true
-    #       showLabel: true
   kubernetes:
-    # change mode to 'cluster' to use RBAC service account
     mode: disable
-  docker:
   settings:
-
-  # all sections can alternately be appended with "String" such as this example settings. This is useful
-  # for defining a stable ordering. Unfortunately Go's (and therefore Helm's) toYaml function sorts keys
-  # and loses and input ordering. Using a string is the best way around this.
   settingsString: |
     title: Homepage
     headerStyle: boxed
@@ -120,37 +90,9 @@ config:
       My Second Group:
       My Third Group:
 
-# -- Main environment variables. Template enabled.
-# Syntax options:
-# A) TZ: UTC
-# B) PASSWD: '{{ .Release.Name }}'
-# C) PASSWD:
-#      configMapKeyRef:
-#        name: config-map-name
-#        key: key-name
-# D) PASSWD:
-#      valueFrom:
-#        secretKeyRef:
-#          name: secret-name
-#          key: key-name
-#      ...
-# E) - name: TZ
-#      value: UTC
-# F) - name: TZ
-#      value: '{{ .Release.Name }}'
 env:
   - name: HOMEPAGE_ALLOWED_HOSTS
-    # This value must be set
-    # ref: https://gethomepage.dev/installation/#homepage_allowed_hosts
     value: home.homelab
-
-# To include environment variables from other configs or other secrets for use in
-# Homepage's variable substitutions. Refer to them here.
-# envFrom:
-#   - secretRef:
-#       name: my-secret
-#   - configMapRef:
-#       name: my-configmap
 
 persistence:
   logs:

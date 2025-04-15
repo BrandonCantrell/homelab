@@ -1,5 +1,0 @@
-{
-    "yaml.schemas": {
-        "https://json.schemastore.org/helmfile.json": "file:///Users/brandon.cantrell/code/github.com/bcantrell/homelab/k3s-cluster/kube-apps/applications/homepage/values.yaml"
-    }
-}

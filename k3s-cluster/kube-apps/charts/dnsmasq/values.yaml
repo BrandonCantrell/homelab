@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: mrkaran/dnsmasq
+  repository: drpsychick/dnsmasq
   tag: latest
 
 dnsmasq:

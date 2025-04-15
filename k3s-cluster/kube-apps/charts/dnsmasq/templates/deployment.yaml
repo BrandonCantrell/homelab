@@ -17,10 +17,18 @@ spec:
       containers:
         - name: dnsmasq
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          args:
-            {{- range .Values.dnsmasq.domainMappings }}
-            - "--address=/{{ .domain }}/{{ .ip }}"
-            {{- end }}
+          env:
+            - name: DNSMASQ_ADDRESSES
+              value: |
+                {{- range .Values.dnsmasq.domainMappings }}
+                /{{ .domain }}/{{ .ip }}
+                {{- end }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "${DNSMASQ_ADDRESSES}" | xargs -n1 echo address= > /etc/dnsmasq.d/custom.conf && \
+              dnsmasq -k --log-facility=-
           ports:
             - containerPort: 53
               protocol: UDP

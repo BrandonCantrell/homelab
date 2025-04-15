@@ -12,13 +12,14 @@ spec:
       labels:
         app: dnsmasq
     spec:
-      containers:
+        containers:
         - name: dnsmasq
-          image: jpillora/dnsmasq
-          args:
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        args:
             {{- range .Values.dnsmasq.domainMappings }}
-            - "-A=/{{ .domain }}/{{ .ip }}"
+            - "--address=/{{ .domain }}/{{ .ip }}"
             {{- end }}
-          ports:
+        ports:
             - containerPort: 53
-              protocol: UDP
+            protocol: UDP
+

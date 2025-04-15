@@ -1,14 +1,4 @@
 ansible_become: true
-ansible_ssh_user: ansible 
-
+ansible_ssh_user: ansible
 k3s_become: true
-k3s_server:
-  disable:
-    - traefik
-    - servicelb
-  tls_san:
-    - "192.168.4.10"
 
-k3s_agent:
-  node_labels:
-    - "role=worker"

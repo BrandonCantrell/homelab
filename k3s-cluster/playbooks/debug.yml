@@ -1,5 +1,5 @@
 - name: Debug
-  hosts: pi5s
+  hosts: all
   tasks:
     - name: Ping my hosts
       ansible.builtin.ping:

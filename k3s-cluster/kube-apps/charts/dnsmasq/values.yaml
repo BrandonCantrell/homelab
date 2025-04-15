@@ -1,5 +1,9 @@
 replicaCount: 1
 
+image:
+  repository: mrkaran/dnsmasq
+  tag: latest
+
 dnsmasq:
   domainMappings:
     - domain: "home.homelab"

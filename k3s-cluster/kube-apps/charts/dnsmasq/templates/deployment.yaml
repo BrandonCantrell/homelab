@@ -2,6 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dnsmasq
+  labels:
+    app: dnsmasq
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
@@ -12,14 +14,13 @@ spec:
       labels:
         app: dnsmasq
     spec:
-        containers:
+      containers:
         - name: dnsmasq
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        args:
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          args:
             {{- range .Values.dnsmasq.domainMappings }}
             - "--address=/{{ .domain }}/{{ .ip }}"
             {{- end }}
-        ports:
+          ports:
             - containerPort: 53
-            protocol: UDP
-
+              protocol: UDP

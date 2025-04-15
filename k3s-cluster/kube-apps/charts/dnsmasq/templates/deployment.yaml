@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dnsmasq
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: dnsmasq
+  template:
+    metadata:
+      labels:
+        app: dnsmasq
+    spec:
+      containers:
+        - name: dnsmasq
+          image: jpillora/dnsmasq
+          args:
+            {{- range .Values.dnsmasq.domainMappings }}
+            - "-A=/{{ .domain }}/{{ .ip }}"
+            {{- end }}
+          ports:
+            - containerPort: 53
+              protocol: UDP

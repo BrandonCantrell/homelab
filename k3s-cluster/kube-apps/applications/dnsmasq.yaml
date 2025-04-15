@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dnsmasq
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/BrandonCantrell/homelab
+    targetRevision: HEAD
+    path: k3s-cluster/kube-apps/charts/dnsmasq
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: networking
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

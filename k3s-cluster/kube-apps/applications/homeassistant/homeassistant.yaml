@@ -22,6 +22,16 @@ spec:
 
         homeassistant:
           externalUrl: "http://homeassistant.homelab"
+          configuration: |
+            http:
+              use_x_forwarded_for: true
+              trusted_proxies:
+                - 10.42.0.0/16
+                - 192.168.4.0/24
+                - 127.0.0.1
+                - 10.43.0.0/16  # Add this to include cluster IPs like the service itself
+
+
 
         service:
           enabled: true
@@ -30,15 +40,17 @@ spec:
 
         ingress:
           enabled: true
+          external: false
           className: nginx
           annotations:
             kubernetes.io/ingress.class: nginx
             nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+            nginx.ingress.kubernetes.io/rewrite-target: /
           hosts:
             - host: homeassistant.homelab
               paths:
                 - path: /
-                  pathType: Prefix
+                  pathType: ImplementationSpecific
   syncPolicy:
     automated:
       prune: true

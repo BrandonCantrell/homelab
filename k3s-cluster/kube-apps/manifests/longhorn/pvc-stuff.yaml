@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: longhorn-volv-pvc-homeassist
+  name: longhorn-volv-pvc-stuff
 spec:
   accessModes:
     - ReadWriteMany
   storageClassName: longhorn
   resources:
     requests:
-      storage: 5Gi
+      storage: 260Gi

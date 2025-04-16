@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/BrandonCantrell/homelab.git
     targetRevision: HEAD
-    path: kube-apps/charts/stash
+    path: k3s-cluster/kube-apps/charts/stash
   syncPolicy:
     automated:
       prune: true

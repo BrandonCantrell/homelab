@@ -9,7 +9,7 @@ spec:
     server: https://kubernetes.default.svc
     namespace: stash
   source:
-    repoURL: https://github.com/BrandonCantrell/your-repo.git
+    repoURL: https://github.com/BrandonCantrell/homelab.git
     targetRevision: HEAD
     path: kube-apps/charts/stash
   syncPolicy:

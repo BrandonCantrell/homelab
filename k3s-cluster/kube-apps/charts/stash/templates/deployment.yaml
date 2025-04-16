@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "stash.fullname" . }}
+  labels:
+    app: {{ include "stash.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "stash.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "stash.name" . }}
+    spec:
+      containers:
+        - name: stash
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: 9999
+          volumeMounts:
+            - name: config
+              mountPath: /root/.stash
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: {{ include "stash.fullname" . }}-pvc

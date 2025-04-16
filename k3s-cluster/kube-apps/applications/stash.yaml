@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: stash
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: stash
+  source:
+    repoURL: https://github.com/BrandonCantrell/your-repo.git
+    targetRevision: HEAD
+    path: kube-apps/charts/stash
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

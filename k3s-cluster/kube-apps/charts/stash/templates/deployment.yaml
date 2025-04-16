@@ -23,6 +23,8 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /root/.stash
+            - name: data
+              mountPath: /data
       volumes:
         - name: config
           persistentVolumeClaim:

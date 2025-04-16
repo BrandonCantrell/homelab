@@ -1,4 +1,13 @@
 ansible_become: true
+
+# === Users ===
+bootstrap_ssh_user: bcant
 ansible_ssh_user: ansible
+ansible_target_user: ansible
+git_user_email: bcantr3ll@gmail.com
+git_user_name: BrandonCantrell
+
+
+# === K3S Vars === 
 k3s_become: true
 

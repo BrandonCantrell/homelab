@@ -62,15 +62,28 @@ spec:
                       href: https://github.com/
           
           services:
-            - My First Group:
-                - My First Service:
-                    href: http://localhost/
-                    description: "Homepage is awesome"
-            
-            - My Second Group:
-                - My Second Service:
-                    href: http://localhost/
+            - Smart Home Services:
+                - Home Assistant:
+                    href: http://homeassistant.homelab
+                    description: "HA"
+          
+                - WLED Nanoleaf Tree:
+                    href: http://wled-tree.homelab
+                    description: "Tree"
+  
+                - OctoPrint:
+                    href: http://octoprint.homelab
+                    description: "OctoPrint"
+
+
+            - Homelab Resources:
+                - Longhorn UI:
+                    href: http://longhorn.homelab
                     description: "Homepage is the best"
+
+                - ArgoCD:
+                    href: https://192.168.4.10:30080
+                    description: "ArgoCD"
             
             - My Third Group:
                 - My Third Service:

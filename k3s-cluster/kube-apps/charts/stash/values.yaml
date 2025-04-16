@@ -10,7 +10,7 @@ service:
   port: 9999
 
 ingress:
-  enabled: false
+  enabled: true
   className: nginx
   host: stash.homelab
 

@@ -23,12 +23,12 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /root/.stash
-            # - name: linux-isos
-            #   mountPath: /data
+            - name: linux-isos
+              mountPath: /data
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: {{ include "stash.fullname" . }}-pvc
-        # - name: linux-isos
-        #   persistentVolumeClaim:
-        #     claimName: {{ include "stash.fullname" . }}-pvc
+        - name: linux-isos
+          persistentVolumeClaim:
+            claimName: {{ include "stash.fullname" . }}-pvc

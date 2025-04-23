@@ -16,7 +16,7 @@ ingress:
 
 persistence:
   enabled: true
-  size: 260Gi
+  size: 265Gi
   storageClass: longhorn
 
 resources: {}

@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ include "stash.fullname" . }}-pvc2
+  name: {{ include "stash.fullname" . }}-pvc
 spec:
   accessModes: [ "ReadWriteMany" ]
   resources:

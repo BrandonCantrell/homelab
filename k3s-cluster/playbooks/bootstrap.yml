@@ -2,30 +2,28 @@
 - name: Bootstrap system and users
   hosts: all
   become: true
-  vars:
-    git_user_email: "bcantr3ll@gmail.com"
-    git_user_name: "BrandonCantrell"
   roles:
     - pi_system_prep
   tasks:
 
     # === USER SETUP ===
 
-    - name: Create ansible user
+    - name: Create "{{ ansible_target_user }}" user
       user:
-        name: ansible
+        name: "{{ ansible_target_user }}"
         shell: /bin/bash
         create_home: yes
 
-    - name: Add SSH key for ansible user
+    # === Replace the key file with your key named "{{ ansible_target_user }}".pub
+    - name: Add SSH key for "{{ ansible_target_user }}" user
       authorized_key:
-        user: ansible
-        key: "{{ lookup('file', '../files/ansible.pub') }}"
+        user: "{{ ansible_target_user }}"
+        key: "{{ lookup('file', '../files/{{ ansible_target_user }}.pub') }}"
 
-    - name: Allow ansible user passwordless sudo
+    - name: Allow "{{ ansible_target_user }}" user passwordless sudo
       copy:
-        dest: /etc/sudoers.d/ansible
-        content: "ansible ALL=(ALL) NOPASSWD: ALL\n"
+        dest: /etc/sudoers.d/{{ ansible_target_user }}
+        content: "{{ ansible_target_user }} ALL=(ALL) NOPASSWD: ALL\n"
         mode: '0440'
   
     # === GIT CONFIG ===
@@ -35,6 +33,10 @@
         name: core.editor
         scope: global
         value: nano
+  
+    - name: Debug git user variables
+      debug:
+        msg: "Git user: {{ git_user_name }}, email: {{ git_user_email }}"
 
     - name: Setup email
       git_config:

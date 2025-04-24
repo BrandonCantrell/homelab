@@ -1,0 +1,33 @@
+# Custom values for cert-manager Helm chart
+installCRDs: true
+
+global:
+  leaderElection:
+    namespace: cert-manager
+
+prometheus:
+  enabled: true
+  servicemonitor:
+    enabled: true
+
+# Configure the webhook component
+webhook:
+  replicaCount: 1
+  timeoutSeconds: 10
+
+# Configure the cainjector component
+cainjector:
+  replicaCount: 1
+
+# Configure the startupapicheck component
+startupapicheck:
+  enabled: true
+  timeout: 1m
+
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi

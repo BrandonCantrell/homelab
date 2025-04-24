@@ -1,0 +1,54 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: external-helm-applications
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - name: cert-manager
+        namespace: cert-manager
+        chart: cert-manager
+        repo: https://charts.jetstack.io
+        version: v1.13.2
+        valuesPath: k3s-cluster/kube-apps/values/cert-manager-values.yaml
+      - name: loki
+        namespace: monitoring
+        chart: loki
+        repo: https://grafana.github.io/helm-charts
+        version: 5.8.11
+        valuesPath: k3s-cluster/kube-apps/values/loki-values.yaml
+      - name: grafana
+        namespace: monitoring
+        chart: grafana
+        repo: https://grafana.github.io/helm-charts
+        version: 6.58.8
+        valuesPath: k3s-cluster/kube-apps/values/grafana-values.yaml
+      - name: prometheus
+        namespace: monitoring
+        chart: prometheus
+        repo: https://prometheus-community.github.io/helm-charts
+        version: 22.6.7
+        valuesPath: k3s-cluster/kube-apps/values/prometheus-values.yaml
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        chart: '{{chart}}'
+        repoURL: '{{repo}}'
+        targetRevision: '{{version}}'
+        helm:
+          releaseName: '{{name}}'
+          valueFiles:
+          - $values/{{valuesPath}}
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

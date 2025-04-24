@@ -1,0 +1,35 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: manifests-applications
+  namespace: argocd
+spec:
+  generators:
+  - list:
+      elements:
+      - name: argocd
+        namespace: argocd
+        path: k3s-cluster/kube-apps/manifests/argocd
+      - name: longhorn
+        namespace: longhorn-system
+        path: k3s-cluster/kube-apps/manifests/longhorn
+      - name: metallb
+        namespace: metallb-system
+        path: k3s-cluster/kube-apps/manifests/metallb
+  template:
+    metadata:
+      name: '{{name}}'
+      namespace: argocd
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/BrandonCantrell/homelab.git
+        targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{namespace}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true

@@ -51,7 +51,7 @@ spec:
         valuesPath: k3s-cluster/kube-apps/values/metallb-values.yaml
       - name: homepage
         namespace: homepage
-        chart: homepage-app
+        chart: homepage
         repo: https://jameswynn.github.io/helm-charts
         version: 2.0.2
         valuesPath: k3s-cluster/kube-apps/values/homepage-values.yaml

@@ -180,3 +180,7 @@ cdktf.out
 cdktf.log
 *terraform.*.tfstate*
 
+
+k3s-cluster\kube-apps\applicationsets\MIGRATION-SUMMARY.md
+k3s-cluster\kube-apps\applicationsets\GATEWAY-API-MIGRATION.md
+k3s-cluster\kube-apps\applicationsets\DEPLOYMENT-GUIDE.md

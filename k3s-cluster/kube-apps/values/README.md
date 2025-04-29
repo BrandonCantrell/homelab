@@ -8,6 +8,10 @@ This directory contains custom values files for external Helm charts used in the
 - **loki-values.yaml**: Custom values for the Loki Helm chart
 - **grafana-values.yaml**: Custom values for the Grafana Helm chart
 - **prometheus-values.yaml**: Custom values for the Prometheus Helm chart
+- **longhorn-values.yaml**: Custom values for the Longhorn Helm chart
+- **metallb-values.yaml**: Custom values for the MetalLB Helm chart
+- **homepage-values.yaml**: Custom values for the Homepage Helm chart
+- **homeassistant-values.yaml**: Custom values for the Home Assistant Helm chart
 
 ## Usage
 

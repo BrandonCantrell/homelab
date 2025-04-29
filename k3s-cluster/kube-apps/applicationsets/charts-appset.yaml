@@ -7,14 +7,7 @@ spec:
   generators:
   - list:
       elements:
-      # Existing applications
-      - name: homeassistant
-        namespace: homeassistant
-        path: k3s-cluster/kube-apps/charts/homeassistant
-      - name: homepage
-        namespace: homepage
-        path: k3s-cluster/kube-apps/charts/homepage
-      - name: stash
+      - name: stashDB
         namespace: stash
         path: k3s-cluster/kube-apps/charts/stash
   template:

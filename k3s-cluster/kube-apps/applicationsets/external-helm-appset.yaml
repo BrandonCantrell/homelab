@@ -7,26 +7,60 @@ spec:
   generators:
   - list:
       elements:
+      # - name: cert-manager
+      #   namespace: cert-manager
+      #   chart: cert-manager
+      #   repo: https://charts.jetstack.io
+      #   version: v1.13.2
+      #   valuesPath: k3s-cluster/kube-apps/values/cert-manager-values.yaml
+      # - name: loki
+      #   namespace: monitoring
+      #   chart: loki
+      #   repo: https://grafana.github.io/helm-charts
+      #   version: 5.8.11
+      #   valuesPath: k3s-cluster/kube-apps/values/loki-values.yaml
+      # - name: grafana
+      #   namespace: monitoring
+      #   chart: grafana
+      #   repo: https://grafana.github.io/helm-charts
+      #   version: 6.58.8
+      #   valuesPath: k3s-cluster/kube-apps/values/grafana-values.yaml
+      # - name: prometheus
+      #   namespace: monitoring
+      #   chart: prometheus
+      #   repo: https://prometheus-community.github.io/helm-charts
+      #   version: 22.6.7
+      #   valuesPath: k3s-cluster/kube-apps/values/prometheus-values.yaml
       - name: ingress-nginx
         namespace: ingress-nginx
-        chartPath: k3s-cluster/kube-apps/charts/ingress-nginx
-        valuesPath: ../../values/ingress-nginx-values.yaml
+        chart: ingress-nginx
+        repo: https://kubernetes.github.io/ingress-nginx
+        version: 4.12.1
+        valuesPath: k3s-cluster/kube-apps/values/ingress-nginx-values.yaml
       - name: longhorn
         namespace: longhorn-system
-        chartPath: k3s-cluster/kube-apps/charts/longhorn
-        valuesPath: ../../values/longhorn-values.yaml
-      - name: metallb
+        chart: longhorn
+        repo: https://charts.longhorn.io
+        version: 1.8.1
+        valuesPath: k3s-cluster/kube-apps/values/longhorn-values.yaml
+      - name: metallb-app
         namespace: metallb-system
-        chartPath: k3s-cluster/kube-apps/charts/metallb
-        valuesPath: ../../values/metallb-values.yaml
+        chart: metallb
+        repo: https://metallb.github.io/metallb
+        version: 0.14.6
+        valuesPath: k3s-cluster/kube-apps/values/metallb-values.yaml
       - name: homepage
         namespace: homepage
-        chartPath: k3s-cluster/kube-apps/charts/homepage
-        valuesPath: ../../values/homepage-values.yaml
+        chart: homepage
+        repo: https://jameswynn.github.io/helm-charts
+        version: 2.0.2
+        valuesPath: k3s-cluster/kube-apps/values/homepage-values.yaml
       - name: homeassistant
         namespace: homeassistant
-        chartPath: k3s-cluster/kube-apps/charts/home-assistant
-        valuesPath: ../../values/homeassistant-values.yaml
+        chart: home-assistant
+        repo: http://pajikos.github.io/home-assistant-helm-chart
+        version: 0.2.117
+        valuesPath: k3s-cluster/kube-apps/values/homeassistant-values.yaml
   template:
     metadata:
       name: '{{name}}'
@@ -35,8 +69,8 @@ spec:
       project: default
       source:
         repoURL: https://github.com/BrandonCantrell/homelab.git
-        targetRevision: develop
-        path: '{{chartPath}}'
+        targetRevision: HEAD
+        path: k3s-cluster/kube-apps/charts/{{chart}}
         helm:
           releaseName: '{{name}}'
           valueFiles:

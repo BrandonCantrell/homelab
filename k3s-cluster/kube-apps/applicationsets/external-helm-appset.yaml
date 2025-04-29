@@ -49,7 +49,7 @@ spec:
         valuesPath: ../../values/homepage-values.yaml
       - name: homeassistant
         namespace: homeassistant
-        path: ../../charts/home-assistant
+        path: k3s-cluster/kube-apps/charts/home-assistant
         valuesPath: ../../values/homeassistant-values.yaml
   template:
     metadata:

@@ -59,7 +59,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/BrandonCantrell/homelab.git
-        targetRevision: HEAD
+        targetRevision: develop
         path: '{{path}}'
         helm:
           releaseName: '{{name}}'

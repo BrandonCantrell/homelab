@@ -32,7 +32,7 @@ spec:
       #   version: 22.6.7
       #   valuesPath: k3s-cluster/kube-apps/values/prometheus-values.yaml
       - name: ingress-nginx
-        namespace: argocd
+        namespace: ingress-nginx
         chart: ingress-nginx
         repo: https://kubernetes.github.io/ingress-nginx
         version: 4.12.1

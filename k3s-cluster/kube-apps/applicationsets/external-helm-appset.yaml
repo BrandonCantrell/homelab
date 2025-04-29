@@ -31,6 +31,12 @@ spec:
       #   repo: https://prometheus-community.github.io/helm-charts
       #   version: 22.6.7
       #   valuesPath: k3s-cluster/kube-apps/values/prometheus-values.yaml
+      - name: ingress-nginx
+        namespace: argocd
+        chart: ingress-nginx
+        repo: https://kubernetes.github.io/ingress-nginx
+        version: 4.12.1
+        valuesPath: k3s-cluster/kube-apps/values/ingress-nginx-values.yaml
       - name: longhorn
         namespace: longhorn-system
         chart: longhorn

@@ -17,10 +17,8 @@ spec:
         valuesPath: ../../values/loki-values.yaml
       - name: grafana
         namespace: monitoring
-        chart: grafana
-        repo: https://grafana.github.io/helm-charts
-        version: 6.58.8
-        valuesPath: k3s-cluster/kube-apps/values/grafana-values.yaml
+        repo: k3s-cluster/kube-apps/charts/grafana
+        valuesPath: ../../values/grafana-values.yaml
       - name: prometheus
         namespace: monitoring
         chart: prometheus

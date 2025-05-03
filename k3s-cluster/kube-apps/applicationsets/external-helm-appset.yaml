@@ -17,7 +17,7 @@ spec:
         valuesPath: ../../values/loki-values.yaml
       - name: grafana
         namespace: monitoring
-        repo: k3s-cluster/kube-apps/charts/grafana
+        chart: k3s-cluster/kube-apps/charts/grafana
         valuesPath: ../../values/grafana-values.yaml
       - name: prometheus
         namespace: monitoring

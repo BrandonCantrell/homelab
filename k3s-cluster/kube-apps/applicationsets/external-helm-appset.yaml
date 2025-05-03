@@ -10,9 +10,9 @@ spec:
       - name: cert-manager
         namespace: cert-manager
         chart: cert-manager
-        repo: https://charts.jetstack.io
+        repo: k3s-cluster/kube-apps/charts/cert-manager
         version: v1.13.2
-        valuesPath: k3s-cluster/kube-apps/values/cert-manager-values.yaml
+        valuesPath: ../../values/cert-manager-values.yaml
       - name: loki
         namespace: monitoring
         chart: loki

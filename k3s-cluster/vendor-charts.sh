@@ -12,6 +12,7 @@ CHARTS=(
   "metallb https://metallb.github.io/metallb 0.14.6"
   "homepage https://jameswynn.github.io/helm-charts 2.0.2"
   "home-assistant http://pajikos.github.io/home-assistant-helm-chart 0.2.117"
+  "cert-manager https://charts.jetstack.io 1.13.2 "
 )
 
 # Confirm we are in the right place

@@ -9,15 +9,12 @@ spec:
       elements:
       - name: cert-manager
         namespace: cert-manager
-        chart: cert-manager
         path: k3s-cluster/kube-apps/charts/cert-manager
         valuesPath: ../../values/cert-manager-values.yaml
       - name: loki
         namespace: monitoring
-        chart: loki
-        repo: https://grafana.github.io/helm-charts
-        version: 5.8.11
-        valuesPath: k3s-cluster/kube-apps/values/loki-values.yaml
+        path: k3s-cluster/kube-apps/charts/loki
+        valuesPath: ../../values/loki-values.yaml
       - name: grafana
         namespace: monitoring
         chart: grafana

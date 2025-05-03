@@ -19,7 +19,7 @@ CHARTS=(
 
 # Confirm we are in the right place
 if [ ! -d "$CHARTS_DIR" ]; then
-  echo "❌ Charts directory $CHARTS_DIR does not exist! Are you in k3s-cluster/ ?"
+  echo "Charts directory $CHARTS_DIR does not exist! Are you in k3s-cluster/ ?"
   exit 1
 fi
 
@@ -35,18 +35,18 @@ for ENTRY in "${CHARTS[@]}"; do
   NEED_PULL=false
 
   if [ ! -d "$DEST_DIR" ]; then
-    echo "📦 Chart $NAME not found locally, will pull."
+    echo "Chart $NAME not found locally, will pull."
     NEED_PULL=true
   elif [ -f "$DEST_DIR/Chart.yaml" ]; then
     LOCAL_VERSION=$(grep '^version:' "$DEST_DIR/Chart.yaml" | sed 's/version:[[:space:]]*//')
     if [ "$LOCAL_VERSION" != "$VERSION" ]; then
-      echo "⚡ Version mismatch for $NAME (local: $LOCAL_VERSION, desired: $VERSION), will re-pull."
+      echo "Version mismatch for $NAME (local: $LOCAL_VERSION, desired: $VERSION), will re-pull."
       NEED_PULL=true
     else
-      echo "✅ Chart $NAME is already correct version ($VERSION). Skipping."
+      echo "Chart $NAME is already correct version ($VERSION). Skipping."
     fi
   else
-    echo "⚠️  Chart.yaml missing for $NAME, will pull fresh."
+    echo " Chart.yaml missing for $NAME, will pull fresh."
     NEED_PULL=true
   fi
 
@@ -60,8 +60,8 @@ for ENTRY in "${CHARTS[@]}"; do
     # Remove any .tgz file if present
     rm -rf "$CHARTS_DIR/$NAME"-*.tgz
 
-    echo "✅ Pulled and updated $NAME."
+    echo "Pulled and updated $NAME."
   fi
 done
 
-echo "🎉 All charts are up to date!"
+echo "All charts are up to date!"

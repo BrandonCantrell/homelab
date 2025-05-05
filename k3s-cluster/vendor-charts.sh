@@ -13,7 +13,7 @@ CHARTS=(
   "homepage https://jameswynn.github.io/helm-charts 2.0.2"
   "home-assistant http://pajikos.github.io/home-assistant-helm-chart 0.2.117"
   "cert-manager https://charts.jetstack.io 1.13.2 "
-  "loki https://grafana.github.io/helm-charts 2.9.1"
+  "loki https://grafana.github.io/helm-charts 6.29.0"
   "grafana https://grafana.github.io/helm-charts 6.58.8"
   "prometheus https://prometheus-community.github.io/helm-charts 22.6.7"
   "promtail https://grafana.github.io/helm-charts 6.15.0"

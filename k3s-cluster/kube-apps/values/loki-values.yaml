@@ -1,27 +1,42 @@
-# Simplified Loki values for homelab
-service:
-  enabled: true
+# Simplified Loki configuration without ingress
+loki:
+  auth_enabled: false
+  commonConfig:
+    replication_factor: 1
+  storage:
+    type: filesystem
 
-persistence:
-  enabled: true
-  storageClassName: longhorn
-  size: 10Gi
+# Use single binary mode (best for Raspberry Pi)
+deploymentMode: SingleBinary
+singleBinary:
+  replicas: 1
+  persistence:
+    enabled: true
+    size: 5Gi
+    storageClassName: longhorn
 
-serviceMonitor:
-  enabled: true
-
-ingress:
+# Disable gateway since we don't need ingress
+gateway:
   enabled: false
-  ingressClassName: nginx
-  hosts:
-    - loki.homelab
-  paths:
-    - /
 
+# Disable tests to avoid validation errors
+test:
+  enabled: false
+
+# Disable monitoring components
+monitoring:
+  selfMonitoring:
+    enabled: false
+  lokiCanary:
+    enabled: false
+  grafanaAgent:
+    enabled: false
+
+# Resource limits appropriate for Raspberry Pi
 resources:
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 50m
+    memory: 64Mi
   limits:
-    cpu: 300m
-    memory: 256Mi
+    cpu: 200m
+    memory: 128Mi

@@ -1,17 +1,12 @@
-# Configuration for the Promtail Helm chart
 config:
-  # Client configuration for sending logs to Loki
   clients:
     - url: http://loki-stack.monitoring.svc.cluster.local:3100/loki/api/v1/push
   
-  # Define scrape configurations and processing pipeline
   snippets:
     extraScrapeConfigs: |
       - job_name: kubernetes-pods
         kubernetes_sd_configs:
           - role: pod
-        pipeline_stages:
-          - docker: {}
         relabel_configs:
           - action: labelmap
             regex: __meta_kubernetes_pod_label_(.+)

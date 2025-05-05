@@ -60,7 +60,7 @@ config:
             description: "OctoPrint"
 
 
-    - Homelab Resources:
+    - Kubernetes Resources:
         - Longhorn UI:
             href: http://longhorn.homelab
             description: "Homepage is the best"
@@ -69,10 +69,19 @@ config:
             href: https://192.168.4.10:30080
             description: "ArgoCD"
     
-    - My Third Group:
-        - My Third Service:
-            href: http://localhost/
-            description: "Homepage is 😎"
+    - Monitoring:
+        - Loki Logs:
+            href: http://loki.homelab
+            description: "Loki"
+        - Prometheus:
+            href: http://prometheus.homelab
+            description: "Prometheus"
+        - Grafana:
+            href: http://grafana.homelab
+            description: "Grafana"
+        - Alert Manager:
+            href: http://alertmanager.homelab
+            description: "Alert Manager"
   
   widgets:
     - resources:

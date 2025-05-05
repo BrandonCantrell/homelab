@@ -1,12 +1,18 @@
+# Configuration for the Promtail Helm chart
 config:
+  # Client configuration for sending logs to Loki
   clients:
     - url: http://loki-stack.monitoring.svc.cluster.local:3100/loki/api/v1/push
   
+  # Define scrape configurations and processing pipeline
   snippets:
     extraScrapeConfigs: |
       - job_name: kubernetes-pods
         kubernetes_sd_configs:
           - role: pod
+        pipeline_stages:
+          - docker: {}
+          - json: {}
         relabel_configs:
           - action: labelmap
             regex: __meta_kubernetes_pod_label_(.+)
@@ -36,6 +42,37 @@ tolerations:
   operator: Exists
   effect: NoSchedule
 
+# Explicitly define volumes to ensure access to logs
+volumeMounts:
+  - name: run
+    mountPath: /run/promtail
+  - name: varlog
+    mountPath: /var/log
+  - name: varlibdockercontainers
+    mountPath: /var/lib/docker/containers
+    readOnly: true
+  - name: positions
+    mountPath: /positions
+
+volumes:
+  - name: run
+    hostPath:
+      path: /run/promtail
+  - name: varlog
+    hostPath:
+      path: /var/log
+  - name: varlibdockercontainers
+    hostPath:
+      path: /var/lib/docker/containers
+  - name: positions
+    hostPath:
+      path: /var/lib/promtail/positions
+
+# Configure positions file to track the logs that have been read
+args:
+  - -config.file=/etc/promtail/promtail.yaml
+  - -positions.file=/positions/positions.yaml
+
 # Set resource limits appropriate for Raspberry Pi
 resources:
   requests:
@@ -45,6 +82,15 @@ resources:
     cpu: 100m
     memory: 128Mi
 
-# Basic service monitoring for Prometheus
+# Enable service monitoring for Prometheus
 serviceMonitor:
   enabled: true
+
+# Set security context to allow reading logs
+securityContext:
+  readOnlyRootFilesystem: true
+  runAsGroup: 0
+  runAsUser: 0  # Run as root to ensure access to all log files
+
+# Set priority class to ensure Promtail starts early
+priorityClassName: system-node-critical

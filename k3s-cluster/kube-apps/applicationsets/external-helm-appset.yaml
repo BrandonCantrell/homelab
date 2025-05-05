@@ -19,8 +19,6 @@ spec:
         namespace: monitoring
         path: k3s-cluster/kube-apps/charts/grafana
         valuesPath: ../../values/grafana-values.yaml
-        path: k3s-cluster/kube-apps/charts/grafana
-        valuesPath: ../../values/grafana-values.yaml
       - name: prometheus
         namespace: monitoring
         path: k3s-cluster/kube-apps/charts/prometheus
@@ -56,9 +54,6 @@ spec:
     spec:
       project: default
       source:
-        repoURL: https://github.com/BrandonCantrell/homelab.git
-        targetRevision: develop
-        path: '{{path}}'
         repoURL: https://github.com/BrandonCantrell/homelab.git
         targetRevision: develop
         path: '{{path}}'

@@ -22,9 +22,8 @@ spec:
       - name: prometheus
         namespace: monitoring
         chart: prometheus
-        repo: https://prometheus-community.github.io/helm-charts
-        version: 22.6.7
-        valuesPath: k3s-cluster/kube-apps/values/prometheus-values.yaml
+        path: k3s-cluster/kube-apps/charts/prometheus
+        valuesPath: ../../values/prometheus-values.yaml
       - name: ingress-nginx
         namespace: ingress-nginx
         path: k3s-cluster/kube-apps/charts/ingress-nginx

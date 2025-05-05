@@ -15,6 +15,7 @@ CHARTS=(
   "cert-manager https://charts.jetstack.io 1.13.2 "
   "loki https://grafana.github.io/helm-charts 5.8.11"
   "grafana https://grafana.github.io/helm-charts 6.58.8"
+  "prometheus https://prometheus-community.github.io/helm-charts 22.6.7"
 )
 
 # Confirm we are in the right place

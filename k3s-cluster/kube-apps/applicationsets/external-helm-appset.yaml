@@ -17,11 +17,10 @@ spec:
         valuesPath: ../../values/loki-values.yaml
       - name: grafana
         namespace: monitoring
-        chart: k3s-cluster/kube-apps/charts/grafana
+        path: k3s-cluster/kube-apps/charts/grafana
         valuesPath: ../../values/grafana-values.yaml
       - name: prometheus
         namespace: monitoring
-        chart: prometheus
         path: k3s-cluster/kube-apps/charts/prometheus
         valuesPath: ../../values/prometheus-values.yaml
       - name: ingress-nginx

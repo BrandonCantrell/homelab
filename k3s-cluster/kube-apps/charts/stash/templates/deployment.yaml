@@ -22,9 +22,10 @@ spec:
             - containerPort: 9999
           volumeMounts:
             - name: config
-              mountPath: /data
+              mountPath: /root/.stash
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: {{ include "stash.fullname" . }}-pvc
+
 

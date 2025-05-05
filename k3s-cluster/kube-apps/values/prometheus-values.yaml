@@ -1,4 +1,4 @@
-# Custom values for Prometheus Helm chart
+# Simplified values for Prometheus Helm chart
 alertmanager:
   enabled: true
   persistence:
@@ -6,9 +6,14 @@ alertmanager:
     storageClassName: longhorn
     size: 2Gi
   ingress:
-    enabled: true
+    enabled: false
     ingressClassName: nginx
+<<<<<<< HEAD
+    pathType: Prefix
+    hosts: 
+=======
     hosts:
+>>>>>>> fc229cb68d1b51844fb6c54acc1acb815989a322
       - alertmanager.homelab
 
 server:
@@ -18,8 +23,9 @@ server:
     storageClassName: longhorn
     size: 10Gi
   ingress:
-    enabled: true
+    enabled: false
     ingressClassName: nginx
+    pathType: Prefix
     hosts:
       - prometheus.homelab
   resources:

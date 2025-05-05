@@ -11,12 +11,14 @@ spec:
         namespace: cert-manager
         path: k3s-cluster/kube-apps/charts/cert-manager
         valuesPath: ../../values/cert-manager-values.yaml
-      - name: loki
+      - name: loki-stack
         namespace: monitoring
-        path: k3s-cluster/kube-apps/charts/loki
-        valuesPath: ../../values/loki-values.yaml
+        path: k3s-cluster/kube-apps/charts/loki-stack
+        valuesPath: ../../values/loki-stack-values.yaml
       - name: grafana
         namespace: monitoring
+        path: k3s-cluster/kube-apps/charts/grafana
+        valuesPath: ../../values/grafana-values.yaml
         path: k3s-cluster/kube-apps/charts/grafana
         valuesPath: ../../values/grafana-values.yaml
       - name: prometheus
@@ -43,6 +45,10 @@ spec:
         namespace: homeassistant
         path: k3s-cluster/kube-apps/charts/home-assistant
         valuesPath: ../../values/homeassistant-values.yaml
+      - name: promtail
+        namespace: monitoring
+        path: k3s-cluster/kube-apps/charts/promtail
+        valuesPath: ../../values/promtail-values.yaml
   template:
     metadata:
       name: '{{name}}'
@@ -53,9 +59,13 @@ spec:
         repoURL: https://github.com/BrandonCantrell/homelab.git
         targetRevision: develop
         path: '{{path}}'
+        repoURL: https://github.com/BrandonCantrell/homelab.git
+        targetRevision: develop
+        path: '{{path}}'
         helm:
           releaseName: '{{name}}'
           valueFiles:
+          - '{{valuesPath}}'
           - '{{valuesPath}}'
       destination:
         server: https://kubernetes.default.svc

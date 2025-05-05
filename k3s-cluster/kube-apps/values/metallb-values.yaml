@@ -2,6 +2,8 @@ controller:
   enabled: true
 speaker:
   enabled: true
+<<<<<<< HEAD
+=======
 
 # Custom resources from manifests/metallb/config.yaml
 crds:
@@ -24,3 +26,4 @@ additionalManifests:
       name: default
       namespace: metallb-system
     spec: {}
+>>>>>>> fc229cb68d1b51844fb6c54acc1acb815989a322

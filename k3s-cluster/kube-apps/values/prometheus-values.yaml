@@ -6,7 +6,7 @@ alertmanager:
     storageClassName: longhorn
     size: 2Gi
   ingress:
-    enabled: true
+    enabled: false
     ingressClassName: nginx
     pathType: Prefix
     hosts: 
@@ -19,7 +19,7 @@ server:
     storageClassName: longhorn
     size: 10Gi
   ingress:
-    enabled: true
+    enabled: false
     ingressClassName: nginx
     pathType: Prefix
     hosts:

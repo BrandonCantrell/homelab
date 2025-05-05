@@ -1,50 +1,27 @@
-# Custom values for Loki Helm chart
-loki:
-  auth_enabled: false
-  commonConfig:
-    replication_factor: 1
-  storage:
-    type: filesystem
-  persistence:
-    enabled: true
-    size: 10Gi
-    storageClassName: longhorn
-
-# Disable tests
-test:
-  enabled: false
-
-# Fully disable monitoring components
-monitoring:
-  enabled: false
-  selfMonitoring:
-    enabled: false
-  lokiCanary:
-    enabled: false
-  grafanaAgent:
-    enabled: false
-
-# Disable CRDs completely
-crds:
-  enabled: false
-  create: false
-
-gateway:
+# Simplified Loki values for homelab
+service:
   enabled: true
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    hosts:
-      - host: loki.homelab
-        paths:
-          - path: /
-            pathType: Prefix
 
-# Single binary mode for small deployments
-singleBinary:
+persistence:
   enabled: true
-  replicas: 1
-  persistence:
-    enabled: true
-    size: 10Gi
-    storageClassName: longhorn
+  storageClassName: longhorn
+  size: 10Gi
+
+serviceMonitor:
+  enabled: true
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hosts:
+    - loki.homelab
+  paths:
+    - /
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 256Mi

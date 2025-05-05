@@ -2,9 +2,12 @@
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
 metadata:
-  name: {{ include "loki.name" . }}
+  name: {{ template "loki.fullname" . }}
   labels:
-    {{- include "loki.labels" . | nindent 4 }}
+    app: {{ template "loki.name" . }}
+    chart: {{ template "loki.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
 spec:
   privileged: false
   allowPrivilegeEscalation: false
@@ -14,6 +17,7 @@ spec:
     - 'persistentVolumeClaim'
     - 'secret'
     - 'projected'
+    - 'downwardAPI'
   hostNetwork: false
   hostIPC: false
   hostPID: false
@@ -24,13 +28,13 @@ spec:
   supplementalGroups:
     rule: 'MustRunAs'
     ranges:
-      - min: 1
-        max: 65535
+    - min: 1
+      max: 65535
   fsGroup:
     rule: 'MustRunAs'
     ranges:
-      - min: 1
-        max: 65535
+    - min: 1
+      max: 65535
   readOnlyRootFilesystem: true
   requiredDropCapabilities:
     - ALL

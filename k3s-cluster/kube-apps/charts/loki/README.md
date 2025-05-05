@@ -1,20 +1,70 @@
-# loki
+# Loki Helm Chart
 
-![Version: 5.8.11](https://img.shields.io/badge/Version-5.8.11-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 2.8.2](https://img.shields.io/badge/AppVersion-2.8.2-informational?style=flat-square)
+## Prerequisites
 
-Helm chart for Grafana Loki in simple, scalable mode
+Make sure you have Helm [installed](https://helm.sh/docs/using_helm/#installing-helm).
 
-## Source Code
+## Get Repo Info
 
-* <https://github.com/grafana/loki>
-* <https://grafana.com/oss/loki/>
-* <https://grafana.com/docs/loki/latest/>
+```console
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo update
+```
 
-## Requirements
+_See [helm repo](https://helm.sh/docs/helm/helm_repo/) for command documentation._
 
-| Repository | Name | Version |
-|------------|------|---------|
-| https://charts.min.io/ | minio(minio) | 4.0.12 |
-| https://grafana.github.io/helm-charts | grafana-agent-operator(grafana-agent-operator) | 0.2.16 |
 
-Find more information in the Loki Helm Chart [documentation](https://grafana.com/docs/loki/next/installation/helm).
+## Deploy Loki only
+
+```bash
+helm upgrade --install loki grafana/loki
+```
+
+## Run Loki behind https ingress
+
+If Loki and Promtail are deployed on different clusters you can add an Ingress in front of Loki.
+By adding a certificate you create an https endpoint. For extra security enable basic authentication on the Ingress.
+
+In Promtail set the following values to communicate with https and basic auth
+
+```yaml
+loki:
+  serviceScheme: https
+  user: user
+  password: pass
+```
+
+Sample helm template for ingress:
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: loki
+  annotations:
+    kubernetes.io/ingress.class: {{ .Values.ingress.class }}
+    ingress.kubernetes.io/auth-type: basic
+    ingress.kubernetes.io/auth-secret: {{ .Values.ingress.basic.secret }}
+spec:
+  rules:
+  - host: {{ .Values.ingress.host }}
+    http:
+      paths:
+      - backend:
+          service:
+            name: loki
+            port:
+              number: 3100
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - {{ .Values.ingress.host }}
+    secretName: {{ .Values.ingress.cert }}
+```
+
+## Use Loki Alerting
+
+You can add your own alerting rules with `alerting_groups` in `values.yaml`. This will create a ConfigMap with your rules and additional volumes and mounts for Loki.
+
+This does **not** enable the Loki `ruler` component which does the evaluation of your rules. The `values.yaml` file does contain a simple example. For more details take a look at the official [alerting docs](https://grafana.com/docs/loki/latest/alerting/).

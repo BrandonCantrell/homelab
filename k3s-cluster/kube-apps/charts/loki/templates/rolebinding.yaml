@@ -1,17 +1,20 @@
-{{- if or .Values.rbac.pspEnabled .Values.rbac.sccEnabled }}
+{{- if .Values.rbac.create }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: {{ include "loki.name" . }}
-  namespace: {{ $.Release.Namespace }}
+  name: {{ template "loki.fullname" . }}
+  namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "loki.labels" . | nindent 4 }}
+    app: {{ template "loki.name" . }}
+    chart: {{ template "loki.chart" . }}
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: {{ include "loki.name" . }}
+  name: {{ template "loki.fullname" . }}
 subjects:
-  - kind: ServiceAccount
-    name: {{ include "loki.serviceAccountName" . }}
-    namespace: {{ $.Release.Namespace }}
+- kind: ServiceAccount
+  name: {{ template "loki.serviceAccountName" . }}
 {{- end }}
+

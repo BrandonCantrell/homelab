@@ -1,5 +1,6 @@
-# Custom values for Grafana Helm chart
-adminPassword: admin  # You should change this in a production environment
+image:
+  repository: grafana/grafana
+  tag: "12.0.0" 
 
 persistence:
   enabled: true

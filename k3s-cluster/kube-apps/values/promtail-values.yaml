@@ -1,0 +1,50 @@
+config:
+  clients:
+    - url: http://loki-gateway.monitoring.svc.cluster.local/loki/api/v1/push
+  
+  snippets:
+    extraScrapeConfigs: |
+      - job_name: kubernetes-pods
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - action: labelmap
+            regex: __meta_kubernetes_pod_label_(.+)
+          - source_labels: 
+              - __meta_kubernetes_namespace
+            target_label: namespace
+          - source_labels:
+              - __meta_kubernetes_pod_name
+            target_label: pod
+          - source_labels:
+              - __meta_kubernetes_pod_container_name
+            target_label: container
+          - source_labels:
+              - __meta_kubernetes_pod_node_name
+            target_label: node
+
+# Run as a DaemonSet to collect logs from all nodes
+daemonset:
+  enabled: true
+
+# Allow Promtail to run on control plane nodes
+tolerations:
+- key: node-role.kubernetes.io/control-plane
+  operator: Exists
+  effect: NoSchedule
+- key: node-role.kubernetes.io/master
+  operator: Exists
+  effect: NoSchedule
+
+# Set resource limits appropriate for Raspberry Pi
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 100m
+    memory: 128Mi
+
+# Basic service monitoring for Prometheus
+serviceMonitor:
+  enabled: true

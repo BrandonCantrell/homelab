@@ -32,8 +32,13 @@ resources:
     cpu: 200m
     memory: 256Mi
 
-grafana-agent-operator:
-  installCRDs: true
+monitoring:
+  selfMonitoring:
+    enabled: false
+  lokiCanary:
+    enabled: false
+  grafanaAgent:
+    enabled: false
 
 # Single binary mode for small deployments
 singleBinary:

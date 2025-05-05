@@ -43,6 +43,10 @@ spec:
         namespace: homeassistant
         path: k3s-cluster/kube-apps/charts/home-assistant
         valuesPath: ../../values/homeassistant-values.yaml
+      - name: promtail
+        namespace: monitoring
+        path: k3s-cluster/kube-apps/charts/promtail
+        valuesPath: ../../values/promtail-values.yaml
   template:
     metadata:
       name: '{{name}}'

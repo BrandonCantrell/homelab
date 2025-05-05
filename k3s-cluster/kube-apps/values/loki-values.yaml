@@ -32,6 +32,9 @@ resources:
     cpu: 200m
     memory: 256Mi
 
+grafana-agent-operator:
+  installCRDs: true
+
 # Single binary mode for small deployments
 singleBinary:
   replicas: 1

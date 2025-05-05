@@ -10,6 +10,15 @@ loki:
     size: 10Gi
     storageClassName: longhorn
 
+# Keep self-monitoring enabled since tests depend on it
+monitoring:
+  selfMonitoring:
+    enabled: true  # Changed from false to true
+  lokiCanary:
+    enabled: false
+  grafanaAgent:
+    enabled: false  # Keep this disabled as we'll use Promtail instead
+
 serviceMonitor:
   enabled: true
 
@@ -31,14 +40,6 @@ resources:
   limits:
     cpu: 200m
     memory: 256Mi
-
-monitoring:
-  selfMonitoring:
-    enabled: false
-  lokiCanary:
-    enabled: false
-  grafanaAgent:
-    enabled: false
 
 # Single binary mode for small deployments
 singleBinary:

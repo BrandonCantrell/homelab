@@ -3,24 +3,10 @@ controller:
 speaker:
   enabled: true
 
-# Custom resources from manifests/metallb/config.yaml
-crds:
-  enabled: true
-  
-# These will be created as additional resources
-additionalManifests:
-  - apiVersion: metallb.io/v1beta1
-    kind: IPAddressPool
-    metadata:
-      name: default-pool
-      namespace: metallb-system
-    spec:
+# Native Helm values for MetalLB configuration
+configInline:
+  address-pools:
+    - name: default
+      protocol: layer2
       addresses:
         - 192.168.4.20-192.168.4.30
-  
-  - apiVersion: metallb.io/v1beta1
-    kind: L2Advertisement
-    metadata:
-      name: default
-      namespace: metallb-system
-    spec: {}

@@ -10,21 +10,24 @@ loki:
     size: 10Gi
     storageClassName: longhorn
 
-# Disable tests to avoid validation errors
+# Disable tests
 test:
   enabled: false
 
-# Keep monitoring configuration
+# Fully disable monitoring components
 monitoring:
+  enabled: false
   selfMonitoring:
     enabled: false
   lokiCanary:
     enabled: false
   grafanaAgent:
-    enabled: false  # Using Promtail instead
+    enabled: false
 
-serviceMonitor:
-  enabled: true
+# Disable CRDs completely
+crds:
+  enabled: false
+  create: false
 
 gateway:
   enabled: true
@@ -37,16 +40,9 @@ gateway:
           - path: /
             pathType: Prefix
 
-resources:
-  requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
-    cpu: 200m
-    memory: 256Mi
-
 # Single binary mode for small deployments
 singleBinary:
+  enabled: true
   replicas: 1
   persistence:
     enabled: true

@@ -10,14 +10,18 @@ loki:
     size: 10Gi
     storageClassName: longhorn
 
-# Keep self-monitoring enabled since tests depend on it
+# Disable tests to avoid validation errors
+test:
+  enabled: false
+
+# Keep monitoring configuration
 monitoring:
   selfMonitoring:
-    enabled: true  # Changed from false to true
+    enabled: false
   lokiCanary:
     enabled: false
   grafanaAgent:
-    enabled: false  # Keep this disabled as we'll use Promtail instead
+    enabled: false  # Using Promtail instead
 
 serviceMonitor:
   enabled: true

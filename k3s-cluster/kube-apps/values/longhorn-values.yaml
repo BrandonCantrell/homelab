@@ -1,0 +1,31 @@
+preUpgradeChecker:
+  jobEnabled: false
+
+persistence:
+  defaultClass: true
+  defaultClassReplicaCount: 1
+
+defaultSettings:
+  defaultReplicaCount: 1
+
+# This is the ingress configuration from the original application
+ingress:
+  enabled: true
+  host: longhorn.homelab
+  path: /
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  ingressClassName: nginx
+
+# This is the additional ingress configuration from manifests/longhorn/ingress.yaml
+additionalIngress:
+  enabled: true
+  name: longhorn-ui
+  annotations:
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  host: home.homelab
+  path: /longhorn
+  pathType: Prefix
+  serviceName: longhorn-frontend
+  servicePort: 80

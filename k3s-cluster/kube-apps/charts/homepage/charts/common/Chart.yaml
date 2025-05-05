@@ -1,0 +1,17 @@
+annotations:
+  artifacthub.io/changes: |-
+    - kind: fixed
+      description: Probes were rendered incorrectly when primary service port was a string.
+apiVersion: v2
+description: Function library for Helm charts
+home: https://github.com/bjw-s/helm-charts/tree/main/charts/library/common
+keywords:
+- common
+- library
+kubeVersion: '>=1.22.0-0'
+maintainers:
+- email: me@bjw-s.dev
+  name: bjw-s
+name: common
+type: library
+version: 1.3.1

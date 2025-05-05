@@ -1,0 +1,66 @@
+# cleaner resource names
+nameOverride: ha
+fullnameOverride: ha
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/home-assistant/home-assistant
+  pullPolicy: IfNotPresent
+  tag: "" 
+
+# Enable host networking for local IoT discovery (mDNS, SSDP, etc.)
+hostNetwork: true
+dnsPolicy: ClusterFirstWithHostNet
+
+configuration:
+  enabled: true
+  forceInit: true
+  trusted_proxies:
+    - 10.42.0.0/16
+    - 192.168.0.0/16
+    - 127.0.0.1
+    - 10.43.0.0/16
+  templateConfig: |
+    default_config:
+
+    http:
+      use_x_forwarded_for: true
+      trusted_proxies:
+        - 10.42.0.0/16
+        - 192.168.4.0/24
+        - 127.0.0.1
+        - 10.43.0.0/16
+
+    frontend:
+      themes: !include_dir_merge_named themes
+
+    automation: !include automations.yaml
+    script: !include scripts.yaml
+    scene: !include scenes.yaml
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 5Gi
+  storageClass: "longhorn"
+
+service:
+  enabled: true
+  type: ClusterIP
+  port: 8123
+
+ingress:
+  enabled: true
+  external: false
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+  hosts:
+    - host: homeassistant.homelab
+      paths:
+        - path: /
+          pathType: ImplementationSpecific

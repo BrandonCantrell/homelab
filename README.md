@@ -16,7 +16,7 @@ This repository documents my journey, configurations, and the evolution of my ho
 > - Maintain a reliable infrastructure for home services
 > - Document and share knowledge with the homelab community
 
----
+---    
 
 
 ## 🏗️ Infrastructure
@@ -51,7 +51,7 @@ This repository documents my journey, configurations, and the evolution of my ho
 
 <!-- ### Installation
 
-## 📁 Directory Structure
+## 📁 Directory Structured
 
 
 ## 🔧 Configuration

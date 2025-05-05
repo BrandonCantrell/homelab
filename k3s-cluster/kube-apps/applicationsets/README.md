@@ -11,14 +11,17 @@ This directory contains ApplicationSets for managing applications in the homelab
 
 - **manifests-appset.yaml**: ApplicationSet for applications that use raw Kubernetes manifests stored in this repository.
   - argocd
-  - longhorn
-  - metallb
+  - metallb-config (configuration resources for MetalLB)
 
 - **external-helm-appset.yaml**: ApplicationSet for applications that use external Helm charts with custom values.
   - cert-manager (from https://charts.jetstack.io)
   - loki (from https://grafana.github.io/helm-charts)
   - grafana (from https://grafana.github.io/helm-charts)
   - prometheus (from https://prometheus-community.github.io/helm-charts)
+  - longhorn (from https://charts.longhorn.io)
+  - metallb (from https://metallb.github.io/metallb)
+  - homepage (from https://jameswynn.github.io/helm-charts)
+  - homeassistant (from http://pajikos.github.io/home-assistant-helm-chart)
 
 ## Usage
 

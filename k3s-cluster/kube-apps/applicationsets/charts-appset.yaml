@@ -18,7 +18,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/BrandonCantrell/homelab.git
-        targetRevision: HEAD
+        targetRevision: develop
         path: '{{path}}'
       destination:
         server: https://kubernetes.default.svc

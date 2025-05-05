@@ -11,10 +11,10 @@ spec:
         namespace: cert-manager
         path: k3s-cluster/kube-apps/charts/cert-manager
         valuesPath: ../../values/cert-manager-values.yaml
-      - name: loki
+      - name: loki-stack
         namespace: monitoring
-        path: k3s-cluster/kube-apps/charts/loki
-        valuesPath: ../../values/loki-values.yaml
+        path: k3s-cluster/kube-apps/charts/loki-stack
+        valuesPath: ../../values/loki-stack-values.yaml
       - name: grafana
         namespace: monitoring
         path: k3s-cluster/kube-apps/charts/grafana

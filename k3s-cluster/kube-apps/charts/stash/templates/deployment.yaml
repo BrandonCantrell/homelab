@@ -28,3 +28,4 @@ spec:
           persistentVolumeClaim:
             claimName: {{ include "stash.fullname" . }}-pvc
 
+

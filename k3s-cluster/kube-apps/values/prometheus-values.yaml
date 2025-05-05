@@ -8,8 +8,12 @@ alertmanager:
   ingress:
     enabled: false
     ingressClassName: nginx
+<<<<<<< HEAD
     pathType: Prefix
     hosts: 
+=======
+    hosts:
+>>>>>>> fc229cb68d1b51844fb6c54acc1acb815989a322
       - alertmanager.homelab
 
 server:

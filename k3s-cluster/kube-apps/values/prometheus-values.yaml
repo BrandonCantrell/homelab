@@ -9,7 +9,11 @@ alertmanager:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - alertmanager.homelab
+      - host: alertmanager.homelab
+        paths:
+          - path: /
+            pathType: Prefix
+
 
 server:
   retention: 15d
@@ -21,7 +25,10 @@ server:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - prometheus.homelab
+      - host: prometheus.homelab
+        paths:
+          - path: /
+            pathType: Prefix
   resources:
     requests:
       cpu: 200m

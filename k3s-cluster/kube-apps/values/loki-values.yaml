@@ -1,4 +1,4 @@
-# Single Binary configuration for Loki on Raspberry Pi
+# Minimal Loki configuration for homelab with filesystem storage
 loki:
   auth_enabled: false
   schemaConfig:
@@ -11,10 +11,10 @@ loki:
           prefix: index_
           period: 24h
 
-# Explicitly set deployment mode
+# Set deployment mode
 deploymentMode: SingleBinary
 
-# Configure single binary mode ONLY (disable SimpleScalable components)
+# Single binary configuration
 singleBinary:
   replicas: 1
   persistence:
@@ -22,13 +22,14 @@ singleBinary:
     size: 5Gi
     storageClassName: longhorn
 
-# Disable all SimpleScalable components
-backend:
-  replicas: 0
-read:
-  replicas: 0
-write:
-  replicas: 0
+# Critical fix: Define storage configuration with bucket names
+# even though we're using filesystem storage
+storage:
+  type: filesystem
+  bucketNames:
+    chunks: loki-chunks
+    ruler: loki-ruler
+    admin: loki-admin
 
 # Disable gateway since we don't need ingress
 gateway:
@@ -38,14 +39,9 @@ gateway:
 test:
   enabled: false
 
-# Disable monitoring components
+# Disable unnecessary monitoring components
 monitoring:
-  selfMonitoring:
-    enabled: false
-  lokiCanary:
-    enabled: false
-  grafanaAgent:
-    enabled: false
+  enabled: false
 
 # Resource limits appropriate for Raspberry Pi
 resources:

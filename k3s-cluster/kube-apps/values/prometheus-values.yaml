@@ -1,4 +1,4 @@
-# Custom values for Prometheus Helm chart
+# Simplified values for Prometheus Helm chart
 alertmanager:
   enabled: true
   persistence:
@@ -8,10 +8,9 @@ alertmanager:
   ingress:
     enabled: true
     ingressClassName: nginx
-    hosts:
-      - name: alertmanager.homelab
-        path: /
-
+    pathType: Prefix
+    hosts: 
+      - alertmanager.homelab
 
 server:
   retention: 15d
@@ -22,10 +21,9 @@ server:
   ingress:
     enabled: true
     ingressClassName: nginx
+    pathType: Prefix
     hosts:
-      - host: prometheus.homelab
-        paths:
-          - path: /
+      - prometheus.homelab
   resources:
     requests:
       cpu: 200m

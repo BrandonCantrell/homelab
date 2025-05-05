@@ -10,7 +10,7 @@ ingress:
   enabled: true
   ingressClassName: nginx
   hosts:
-    - grafana.homelab.local
+    - grafana.homelab
 
 datasources:
   datasources.yaml:

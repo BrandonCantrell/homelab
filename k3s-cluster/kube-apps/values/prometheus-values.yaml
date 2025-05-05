@@ -9,7 +9,7 @@ alertmanager:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - alertmanager.homelab.local
+      - alertmanager.homelab
 
 server:
   retention: 15d
@@ -21,7 +21,7 @@ server:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - prometheus.homelab.local
+      - prometheus.homelab
   resources:
     requests:
       cpu: 200m

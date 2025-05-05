@@ -19,7 +19,7 @@ gateway:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - host: loki.homelab.local
+      - host: loki.homelab
         paths:
           - path: /
             pathType: Prefix

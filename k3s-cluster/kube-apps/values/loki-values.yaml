@@ -1,19 +1,34 @@
-# Simplified Loki configuration without ingress
+# Single Binary configuration for Loki on Raspberry Pi
 loki:
   auth_enabled: false
-  commonConfig:
-    replication_factor: 1
-  storage:
-    type: filesystem
+  schemaConfig:
+    configs:
+      - from: "2020-10-24"
+        store: boltdb-shipper
+        object_store: filesystem
+        schema: v11
+        index:
+          prefix: index_
+          period: 24h
 
-# Use single binary mode (best for Raspberry Pi)
+# Explicitly set deployment mode
 deploymentMode: SingleBinary
+
+# Configure single binary mode ONLY (disable SimpleScalable components)
 singleBinary:
   replicas: 1
   persistence:
     enabled: true
     size: 5Gi
     storageClassName: longhorn
+
+# Disable all SimpleScalable components
+backend:
+  replicas: 0
+read:
+  replicas: 0
+write:
+  replicas: 0
 
 # Disable gateway since we don't need ingress
 gateway:

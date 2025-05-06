@@ -28,6 +28,16 @@ datasources:
       url: http://loki-stack.monitoring.svc.cluster.local:3100
       access: proxy
       isDefault: true
+      jsonData:
+        timeout: 60
+        maxLines: 1000
+        derivedFields: []
+        # This is the important part for Grafana v12
+        healthCheck:
+          enabled: true
+          target:
+            # Use a simple LogQL query that Loki understands
+            expr: "{job=\"host-logs\"} |= \"\""
 
 dashboardProviders:
   dashboardproviders.yaml:

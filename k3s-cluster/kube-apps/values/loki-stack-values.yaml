@@ -28,9 +28,13 @@ loki:
     table_manager:
       retention_deletes_enabled: true
       retention_period: 720h  # 30 days retention (30 days × 24 hours)
-    
     limits_config:
-      retention_period: 720h  # 30 days retention        
+      retention_period: 720h      
+    memberlist:
+      join_members:
+        - loki-stack-memberlist.monitoring.svc.cluster.local:7946
+      abort_if_cluster_join_fails: false
+      max_join_retries: 0  # Disable retries 
 
 
 promtail:

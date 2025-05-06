@@ -1,3 +1,4 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
@@ -17,8 +18,6 @@ spec:
         valuesPath: ../../values/loki-stack-values.yaml
       - name: grafana
         namespace: monitoring
-        path: k3s-cluster/kube-apps/charts/grafana
-        valuesPath: ../../values/grafana-values.yaml
         path: k3s-cluster/kube-apps/charts/grafana
         valuesPath: ../../values/grafana-values.yaml
       - name: prometheus
@@ -56,9 +55,6 @@ spec:
     spec:
       project: default
       source:
-        repoURL: https://github.com/BrandonCantrell/homelab.git
-        targetRevision: develop
-        path: '{{path}}'
         repoURL: https://github.com/BrandonCantrell/homelab.git
         targetRevision: develop
         path: '{{path}}'

@@ -1,5 +1,7 @@
-# Custom values for Grafana Helm chart
-adminPassword: admin  # You should change this in a production environment
+---
+image:
+  repository: grafana/grafana
+  tag: "11.0.0" 
 
 persistence:
   enabled: true
@@ -20,11 +22,22 @@ datasources:
       type: prometheus
       url: http://prometheus-server.monitoring.svc.cluster.local
       access: proxy
-      isDefault: true
+      isDefault: false
     - name: Loki
       type: loki
       url: http://loki-stack.monitoring.svc.cluster.local:3100
       access: proxy
+      isDefault: true
+      jsonData:
+        timeout: 60
+        maxLines: 1000
+        derivedFields: []
+        # This is the important part for Grafana v12
+        healthCheck:
+          enabled: true
+          target:
+            # Use a simple LogQL query that Loki understands
+            expr: "{job=\"host-logs\"} |= \"\""
 
 dashboardProviders:
   dashboardproviders.yaml:
@@ -50,8 +63,12 @@ dashboards:
       revision: 27
       datasource: Prometheus
     loki-logs:
-      gnetId: 12019
-      revision: 2
+      gnetId: 13639
+      revision: 1
+      datasource: Loki
+    loki-dashboard:
+      gnetId: 15145
+      revision: 1
       datasource: Loki
 
 resources:

@@ -1,4 +1,4 @@
-# Values for loki-stack for homelab with correct storage paths
+---
 loki:
   enabled: true
   persistence:

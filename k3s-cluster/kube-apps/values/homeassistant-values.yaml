@@ -1,4 +1,4 @@
-# cleaner resource names
+---
 nameOverride: ha
 fullnameOverride: ha
 

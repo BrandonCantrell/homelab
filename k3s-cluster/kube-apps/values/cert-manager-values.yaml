@@ -1,4 +1,4 @@
-# Custom values for cert-manager Helm chart
+---
 installCRDs: true
 
 global:

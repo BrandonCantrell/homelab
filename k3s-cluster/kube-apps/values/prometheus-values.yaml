@@ -1,4 +1,4 @@
-# Simplified values for Prometheus Helm chart
+---
 alertmanager:
   enabled: true
   persistence:

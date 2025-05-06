@@ -1,13 +1,72 @@
+---
 config:
   clients:
     - url: http://loki-stack.monitoring.svc.cluster.local:3100/loki/api/v1/push
   
   snippets:
     extraScrapeConfigs: |
+      # Standard Kubernetes pods logs with improved app labeling
       - job_name: kubernetes-pods
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
+          # Handle special cases for common applications in your homelab
+          # ArgoCD-specific labeling
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: app
+            regex: argocd
+            replacement: argocd
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_part_of]
+            action: replace
+            target_label: app
+            regex: argocd
+            replacement: argocd
+          
+          # Longhorn-specific labeling
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: app
+            regex: longhorn-system
+            replacement: longhorn
+          
+          # Ingress NGINX labeling
+          - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_label_app_kubernetes_io_name]
+            separator: "/"
+            regex: "ingress-nginx/ingress-nginx.*"
+            replacement: ingress-nginx
+            target_label: app
+            action: replace
+            
+          # MetalLB labeling
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: app
+            regex: metallb-system
+            replacement: metallb
+            
+          # Home Assistant labeling
+          - source_labels: [__meta_kubernetes_namespace]
+            action: replace
+            target_label: app
+            regex: homeassistant
+            replacement: homeassistant
+
+          # Generic fallbacks for other applications
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+            target_label: app
+            action: replace
+            regex: (.+)
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            target_label: app
+            action: replace
+            regex: (.+)
+          - source_labels: [__meta_kubernetes_pod_label_k8s_app]
+            target_label: app
+            action: replace
+            regex: (.+)
+          
+          # Add standard metadata
           - action: labelmap
             regex: __meta_kubernetes_pod_label_(.+)
           - source_labels: 
@@ -22,13 +81,27 @@ config:
           - source_labels:
               - __meta_kubernetes_pod_node_name
             target_label: node
-          # This is the critical part - properly setting the log path
-          - source_labels:
-              - __meta_kubernetes_pod_uid
-              - __meta_kubernetes_pod_container_name
-            target_label: __path__
-            separator: /
-            replacement: /var/log/pods/*$1/*.log
+        
+      # For K3s, add additional path for collecting logs from the host
+      - job_name: kubernetes-host-logs
+        static_configs:
+        - targets:
+            - localhost
+          labels:
+            job: host-logs
+            app: system
+            __path__: /var/log/*.log
+      
+      # K3s-specific logs
+      - job_name: k3s-logs
+        static_configs:
+        - targets:
+            - localhost
+          labels:
+            job: k3s
+            app: k3s
+            __path__: /var/log/k3s*.log
+            __path__: /var/log/pods/**/k3s*.log
 
 # Run as a DaemonSet to collect logs from all nodes
 daemonset:
@@ -43,6 +116,29 @@ tolerations:
   operator: Exists
   effect: NoSchedule
 
+# Volume mounts for accessing logs
+volumeMounts:
+  - name: varlog
+    mountPath: /var/log
+  - name: varlibdockercontainers
+    mountPath: /var/lib/docker/containers
+    readOnly: true
+  - name: pods-logs
+    mountPath: /var/log/pods
+    readOnly: true
+
+# Volumes definitions
+volumes:
+  - name: varlog
+    hostPath:
+      path: /var/log
+  - name: varlibdockercontainers
+    hostPath:
+      path: /var/lib/docker/containers
+  - name: pods-logs
+    hostPath:
+      path: /var/log/pods
+
 # Set resource limits appropriate for Raspberry Pi
 resources:
   requests:
@@ -55,3 +151,60 @@ resources:
 # Basic service monitoring for Prometheus
 serviceMonitor:
   enabled: true
+
+# config:
+#   clients:
+#     - url: http://loki-stack.monitoring.svc.cluster.local:3100/loki/api/v1/push
+  
+#   snippets:
+#     extraScrapeConfigs: |
+#       - job_name: kubernetes-pods
+#         kubernetes_sd_configs:
+#           - role: pod
+#         relabel_configs:
+#           - action: labelmap
+#             regex: __meta_kubernetes_pod_label_(.+)
+#           - source_labels: 
+#               - __meta_kubernetes_namespace
+#             target_label: namespace
+#           - source_labels:
+#               - __meta_kubernetes_pod_name
+#             target_label: pod
+#           - source_labels:
+#               - __meta_kubernetes_pod_container_name
+#             target_label: container
+#           - source_labels:
+#               - __meta_kubernetes_pod_node_name
+#             target_label: node
+#           - source_labels:
+#               - __meta_kubernetes_pod_uid
+#               - __meta_kubernetes_pod_container_name
+#             target_label: __path__
+#             separator: /
+#             replacement: /var/log/pods/*$1/*.log
+
+# # Run as a DaemonSet to collect logs from all nodes
+# daemonset:
+#   enabled: true
+
+# # Allow Promtail to run on control plane nodes
+# tolerations:
+# - key: node-role.kubernetes.io/control-plane
+#   operator: Exists
+#   effect: NoSchedule
+# - key: node-role.kubernetes.io/master
+#   operator: Exists
+#   effect: NoSchedule
+
+# # Set resource limits appropriate for Raspberry Pi
+# resources:
+#   requests:
+#     cpu: 50m
+#     memory: 64Mi
+#   limits:
+#     cpu: 100m
+#     memory: 128Mi
+
+# # Basic service monitoring for Prometheus
+# serviceMonitor:
+#   enabled: true

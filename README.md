@@ -17,7 +17,7 @@ This repository implements a modern, GitOps-driven homelab infrastructure built 
 ### Container Orchestration Layer
 - **K3s**: Lightweight Kubernetes distribution optimized for Raspberry Pi
 - **Longhorn**: Distributed block storage for persistent volumes
-- **MetalLB**: Bare metal load balancer implementation
+- **MetalLB**: Bare metal load balancer for external service access
 
 ### Application Deployment Layer
 - **Argo CD**: GitOps continuous delivery for Kubernetes
@@ -40,9 +40,16 @@ Applications are managed in three distinct patterns:
 3. **Raw Manifest Applications**: Kubernetes resources defined directly as YAML
 
 ### Networking Architecture
-- Ingress through NGINX Ingress Controller
-- Service mesh capabilities through MetalLB
-- DNS through external home router with static assignments
+- **Ingress Control**: NGINX Ingress Controller for HTTP/HTTPS traffic
+- **Load Balancing**: MetalLB providing external IPs for services
+- **Name Resolution**: External home router with static DNS assignments
+
+### Observability Architecture
+The homelab implements a complete observability stack:
+- **Metrics Collection**: Prometheus with node-exporter for hardware and service metrics
+- **Log Aggregation**: Loki and Promtail for centralized logging
+- **Visualization**: Grafana dashboards for metrics, logs, and system status
+- **Service Health**: Alert Manager for monitoring and notification
 
 ## System Components
 
@@ -116,11 +123,11 @@ The system is designed to be resilient, with Longhorn providing distributed stor
 ## Future Architecture Plans
 
 The architecture is being extended to include:
-- **Service Mesh & API Gateway**: Migration to Kubernetes Gateway API and Istio for advanced traffic management, security, and observability
-- Enhanced observability with Prometheus/Grafana dashboards
-- Additional home services like Pi-hole, media servers
-- Database services with PostgreSQL and operator-based management
-- Integration with external cloud services where appropriate
+- **Service Mesh**: Implementation of Istio for advanced microservice management
+- **API Gateway**: Migration to Kubernetes Gateway API for modern ingress control
+- **Additional Home Services**: Pi-hole, media servers, and other utilities
+- **Database Services**: PostgreSQL with operator-based management
+- **Integration**: Connections with external cloud services where appropriate
 
 ---
 

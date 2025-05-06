@@ -10,7 +10,7 @@ config:
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
-          # Handle special cases for common applications in your homelab
+          # Handle special cases for common applications in the homelab
           # ArgoCD-specific labeling
           - source_labels: [__meta_kubernetes_namespace]
             action: replace
@@ -100,8 +100,21 @@ config:
           labels:
             job: k3s
             app: k3s
-            __path__: /var/log/k3s*.log
-            __path__: /var/log/pods/**/k3s*.log
+            __path__: 
+              - /var/log/k3s*.log
+              - /var/log/pods/**/k3s*.log
+
+      # Docker/containerd logs
+      - job_name: container-runtime-logs
+        static_configs:
+        - targets:
+            - localhost
+          labels:
+            job: container-runtime
+            app: container-runtime
+            __path__:
+              - /var/lib/docker/containers/*/*.log
+              - /var/lib/containerd/**/*.log
 
 # Run as a DaemonSet to collect logs from all nodes
 daemonset:
@@ -123,6 +136,9 @@ volumeMounts:
   - name: varlibdockercontainers
     mountPath: /var/lib/docker/containers
     readOnly: true
+  - name: containerd-logs
+    mountPath: /var/lib/containerd
+    readOnly: true
   - name: pods-logs
     mountPath: /var/log/pods
     readOnly: true
@@ -135,6 +151,9 @@ volumes:
   - name: varlibdockercontainers
     hostPath:
       path: /var/lib/docker/containers
+  - name: containerd-logs
+    hostPath:
+      path: /var/lib/containerd
   - name: pods-logs
     hostPath:
       path: /var/log/pods

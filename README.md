@@ -1,131 +1,115 @@
-# My Homelab
+# Homelab Architecture
 
+## Overview
 
+This repository implements a modern, GitOps-driven homelab infrastructure built on Raspberry Pi 5 hardware. The architecture combines infrastructure-as-code, configuration management, and Kubernetes to create a scalable and maintainable home infrastructure platform.
 
-## 📝 Overview
-Welcome to my homelab repository! This project serves a dual purpose: it's both a learning platform and a practical solution for home automation and services. Through this homelab, I'm actively exploring and implementing modern DevOps practices, specifically focusing on:
+## Core Architecture Components
 
-- **CI/CD Pipelines**: Implementing continuous integration and deployment workflows
-- **GitOps Methodologies**: Managing infrastructure and application configurations as code
-- **Internal Services**: Hosting and managing various applications that enhance my home environment
+### Hardware Layer
+- **Compute**: Raspberry Pi 5 (8GB) devices
+- **Storage**: SSD-based storage for improved reliability over SD cards
+- **Network**: Static IP addressing in the 192.168.4.x range
 
-This repository documents my journey, configurations, and the evolution of my homelab infrastructure. Whether you're a fellow homelab enthusiast or just curious about self-hosted solutions, you'll find detailed documentation about my setup and the services I maintain.
+### Infrastructure Provisioning Layer
+- **Ansible**: Automated system configuration and Kubernetes deployment
 
-> 🎯 **Primary Goals**:
-> - Learn and implement industry-standard DevOps practices
-> - Maintain a reliable infrastructure for home services
-> - Document and share knowledge with the homelab community
+### Container Orchestration Layer
+- **K3s**: Lightweight Kubernetes distribution optimized for Raspberry Pi
+- **Longhorn**: Distributed block storage for persistent volumes
+- **MetalLB**: Bare metal load balancer implementation
 
----    
+### Application Deployment Layer
+- **Argo CD**: GitOps continuous delivery for Kubernetes
+- **ApplicationSets**: Scalable application definitions
+- **Helm**: Package management for Kubernetes applications
 
+## Architectural Patterns
 
-## 🏗️ Infrastructure
-### Hardware
-- Raspberry Pi5 8gb x2 
+### GitOps Workflow
+The entire infrastructure follows a GitOps pattern where:
+1. All configuration is version-controlled in this repository
+2. Changes are made through pull requests and commits
+3. Argo CD detects changes and reconciles the actual state with the desired state
+4. Applications are deployed in a declarative manner
 
-<!-- ### Network
-- TBD -->
+### Multi-Tier Application Management
+Applications are managed in three distinct patterns:
+1. **External Helm Charts**: Third-party applications with customized values
+2. **Custom Chart Applications**: Our own applications with Helm-based packaging
+3. **Raw Manifest Applications**: Kubernetes resources defined directly as YAML
 
-## 🛠️ Technologies & Services
-- CDKTF
-- Docker
-- Nginx
+### Networking Architecture
+- Ingress through NGINX Ingress Controller
+- Service mesh capabilities through MetalLB
+- DNS through external home router with static assignments
 
-<!-- ## 📊 Services Running
-| Service | Purpose | Port | URL |
-|---------|---------|------|-----|
-| Service1 | Description | xxxx | http://... |
-| Service2 | Description | xxxx | http://... | -->
+## System Components
 
-<!-- ## 🏃‍♂️ Getting Started -->
-<!-- ### Prerequisites
-- CDKTF
-- Python
-  - pipenv
-- NodeJS
-  - @v22.0.0 for CDK compatibility
-- Docker
-- Terraform
-- MiniKube -->
+### Infrastructure Management
+- **Ansible Playbooks**: Bootstrap system, prepare Raspberry Pi, deploy K3s
+- **Ansible Roles**: Specialized configurations for Raspberry Pi and user management
 
+### Kubernetes Platform Components
+- **Core Services**: K3s, Argo CD, MetalLB, NGINX Ingress
+- **Storage**: Longhorn providing replicated storage
+- **Observability**: Prometheus, Grafana, Loki for monitoring and logging
 
-<!-- ### Installation
+### Application Layer
+- **Home Automation**: Home Assistant
+- **Dashboard**: Homepage for service discovery
+- **Backup**: Stash for data protection
 
-## 📁 Directory Structured
+### Chart Vendoring System
+This architecture employs a chart vendoring approach where specific versions of Helm charts are pulled and stored locally in the repository. Benefits include:
 
+- **Consistency**: All chart versions are pinned and tracked in Git
+- **Offline Development**: Allows development without internet access
+- **Modification**: Charts can be customized as needed
+- **Auditing**: Changes to charts are visible in Git history
 
-## 🔧 Configuration
-[Instructions for basic configuration and setup] -->
+The vendoring system is implemented through a `vendor-charts.sh` script that:
+- Checks for version mismatches between desired and local charts
+- Downloads and extracts missing or outdated charts
+- Cleans up temporary files
+- Makes charts available for Argo CD ApplicationSets
 
-<!-- ## 🔐 Security
-- [Security measures implemented]
-- [Best practices followed]
-- [Network security details] -->
+Vendored charts include core infrastructure (NGINX Ingress, MetalLB, Longhorn), observability stack (Prometheus, Grafana, Loki), and applications (Home Assistant, Homepage).
 
-<!-- ## 🔄 Backup Strategy
-- [Backup procedures]
-- [Recovery processes]
-- [Data retention policies] -->
+## Directory Structure Overview
 
-<!-- ## 📈 Monitoring
-- [Monitoring tools used]
-- [Alert system details]
-- [Metrics collected] -->
+homelab/
+├── .github/                    # CI/CD workflows
+└── k3s-cluster/                # Production Kubernetes environment
+├── ansible.cfg            # Ansible configuration
+├── files/                 # SSH keys and other static files
+├── inventories/           # Environment-specific inventories
+│   └── prod/              # Production environment
+├── kube-apps/             # Kubernetes applications
+│   ├── applications/      # Individual Argo CD Applications
+│   ├── applicationsets/   # Argo CD ApplicationSets
+│   ├── charts/           # Helm charts (vendored)
+│   ├── manifests/        # Raw Kubernetes manifests
+│   └── values/           # Helm chart values
+├── playbooks/            # Ansible playbooks
+├── roles/                # Ansible roles
+└── vendor-charts.sh      # Script for vendoring Helm charts
 
-## 🚀 Future Plans
-- [ ] Add additional TF for the following
-  - [ ] pi-hole
-  - [ ] homepage.io
-  - [ ] homeassistant (potential)
-  - [ ] RSS Feed tool (commafeed)
-  - [ ] Emby or Plex
-  - [ ] PostgreSQL w/ PG Admin
-  - [ ] Grafana/Prometheus for monitoring
-- [ ] Work on MiniKube Deployment
-  - [ ] EDB PG Operator
+## Evolution and Scaling
 
-## 📝 Notes
-<!-- - [Important notes]
-- [Known issues]
-- [Troubleshooting tips] -->
+This architecture supports horizontal scaling by adding additional Raspberry Pi nodes to the cluster, with the underlying K3s and MetalLB handling the orchestration and load balancing. The GitOps approach ensures consistency across all environments and simplified operational management.
 
-# Contributing Guide
+The system is designed to be resilient, with Longhorn providing distributed storage, replicated across nodes, ensuring data persists even if a node fails.
 
-## How to Contribute
+## Future Architecture Plans
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Push to your fork
-5. Open a Pull Request
-
-## Pull Request Guidelines
-
-Please include:
-- Description of your changes
-- Any related issues
-- Screenshots (if applicable)
-- Steps to test the changes
-
-## Checklist
-- [ ] I have tested my changes
-- [ ] I have updated documentation (if needed)
-- [ ] My branch is up-to-date with main
-
-## Questions?
-Open an issue for any questions or discussions.
+The architecture is being extended to include:
+- **Service Mesh & API Gateway**: Migration to Kubernetes Gateway API and Istio for advanced traffic management, security, and observability
+- Enhanced observability with Prometheus/Grafana dashboards
+- Additional home services like Pi-hole, media servers
+- Database services with PostgreSQL and operator-based management
+- Integration with external cloud services where appropriate
 
 ---
-Thank you for contributing! 🙏
 
-
-<!-- ## 📜 License -->
-
-## 📞 Contact
-- bcantr3ll@gmail.com
-
-<!-- ## 🙏 Acknowledgments -->
-
----
-Last updated: [2/10/2025]
-
+*Last updated: May 2025*

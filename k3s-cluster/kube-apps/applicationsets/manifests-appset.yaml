@@ -13,7 +13,7 @@ spec:
         path: k3s-cluster/kube-apps/manifests/argocd
       - name: metallb-config
         namespace: metallb-system
-        path: k3s-cluster/kube-apps/manifests/metallb
+        path: k3s-cluster/kube-apps/manifests/metallb-config
   template:
     metadata:
       name: '{{name}}'

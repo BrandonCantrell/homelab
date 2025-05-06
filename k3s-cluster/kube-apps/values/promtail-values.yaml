@@ -10,74 +10,102 @@ config:
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
+          # Path discovery for K3s - critical for finding the log files
           - source_labels: [__meta_kubernetes_pod_uid, __meta_kubernetes_pod_container_name]
             target_label: __path__
             regex: (.+);(.+)
             replacement: /var/log/pods/*$1/*$2/*.log
-          # ArgoCD-specific labeling
-          - source_labels: [__meta_kubernetes_namespace]
+            
+          # Direct app label - common in many K3s deployments  
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            target_label: app
+            regex: (.+)
+            replacement: $1
             action: replace
+            
+          # Kubernetes standard label
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+            target_label: app
+            regex: (.+)
+            replacement: $1
+            action: replace
+
+          # k8s-app label - used by some core Kubernetes components
+          - source_labels: [__meta_kubernetes_pod_label_k8s_app]
+            target_label: app
+            regex: (.+)
+            replacement: $1
+            action: replace
+            
+          # Component label - another common pattern
+          - source_labels: [__meta_kubernetes_pod_label_component]
+            target_label: app
+            regex: (.+)
+            replacement: $1
+            action: replace
+            
+          # Namespace-based application identification for specific applications
+          - source_labels: [__meta_kubernetes_namespace]
             target_label: app
             regex: argocd
             replacement: argocd
-          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_part_of]
             action: replace
-            target_label: app
-            regex: argocd
-            replacement: argocd
-          
-          # Longhorn-specific labeling
+            
           - source_labels: [__meta_kubernetes_namespace]
-            action: replace
             target_label: app
             regex: longhorn-system
             replacement: longhorn
-          
-          # Ingress NGINX labeling
-          - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_pod_label_app_kubernetes_io_name]
-            separator: "/"
-            regex: "ingress-nginx/ingress-nginx.*"
-            replacement: ingress-nginx
-            target_label: app
             action: replace
             
-          # MetalLB labeling
           - source_labels: [__meta_kubernetes_namespace]
+            target_label: app
+            regex: ingress-nginx
+            replacement: ingress-nginx
             action: replace
+            
+          - source_labels: [__meta_kubernetes_namespace]
             target_label: app
             regex: metallb-system
             replacement: metallb
-            
-          # Home Assistant labeling
-          - source_labels: [__meta_kubernetes_namespace]
             action: replace
+            
+          - source_labels: [__meta_kubernetes_namespace]
             target_label: app
             regex: homeassistant
             replacement: homeassistant
-
-          # Generic fallbacks
-          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
-            target_label: app
             action: replace
-            regex: (.+)
-          - source_labels: [__meta_kubernetes_pod_label_app]
+            
+          - source_labels: [__meta_kubernetes_namespace]
             target_label: app
+            regex: homepage
+            replacement: homepage
             action: replace
-            regex: (.+)
-          - source_labels: [__meta_kubernetes_pod_label_k8s_app]
+            
+          - source_labels: [__meta_kubernetes_namespace]
             target_label: app
+            regex: cert-manager
+            replacement: cert-manager
             action: replace
-            regex: (.+)
-          
-          # Add standard metadata
+            
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: app
+            regex: monitoring
+            replacement: monitoring
+            action: replace
+            
+          # Add standard Kubernetes metadata
           - action: labelmap
             regex: __meta_kubernetes_pod_label_(.+)
+            
           - source_labels: [__meta_kubernetes_namespace]
             target_label: namespace
+            
           - source_labels: [__meta_kubernetes_pod_name]
             target_label: pod
+            
           - source_labels: [__meta_kubernetes_pod_container_name]
             target_label: container
+            
           - source_labels: [__meta_kubernetes_pod_node_name]
             target_label: node
         
@@ -184,60 +212,3 @@ resources:
 # Prometheus monitoring
 serviceMonitor:
   enabled: true
-
-# config:
-#   clients:
-#     - url: http://loki-stack.monitoring.svc.cluster.local:3100/loki/api/v1/push
-  
-#   snippets:
-#     extraScrapeConfigs: |
-#       - job_name: kubernetes-pods
-#         kubernetes_sd_configs:
-#           - role: pod
-#         relabel_configs:
-#           - action: labelmap
-#             regex: __meta_kubernetes_pod_label_(.+)
-#           - source_labels: 
-#               - __meta_kubernetes_namespace
-#             target_label: namespace
-#           - source_labels:
-#               - __meta_kubernetes_pod_name
-#             target_label: pod
-#           - source_labels:
-#               - __meta_kubernetes_pod_container_name
-#             target_label: container
-#           - source_labels:
-#               - __meta_kubernetes_pod_node_name
-#             target_label: node
-#           - source_labels:
-#               - __meta_kubernetes_pod_uid
-#               - __meta_kubernetes_pod_container_name
-#             target_label: __path__
-#             separator: /
-#             replacement: /var/log/pods/*$1/*.log
-
-# # Run as a DaemonSet to collect logs from all nodes
-# daemonset:
-#   enabled: true
-
-# # Allow Promtail to run on control plane nodes
-# tolerations:
-# - key: node-role.kubernetes.io/control-plane
-#   operator: Exists
-#   effect: NoSchedule
-# - key: node-role.kubernetes.io/master
-#   operator: Exists
-#   effect: NoSchedule
-
-# # Set resource limits appropriate for Raspberry Pi
-# resources:
-#   requests:
-#     cpu: 50m
-#     memory: 64Mi
-#   limits:
-#     cpu: 100m
-#     memory: 128Mi
-
-# # Basic service monitoring for Prometheus
-# serviceMonitor:
-#   enabled: true

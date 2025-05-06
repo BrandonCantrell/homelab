@@ -78,31 +78,34 @@ Vendored charts include core infrastructure (NGINX Ingress, MetalLB, Longhorn), 
 
 ## Directory Structure Overview
 
+```text
 homelab/
 │
 ├── .github/                    # CI/CD workflows
 │
 └── k3s-cluster/                # Production Kubernetes environment
     │
-    ├── ansible.cfg            # Ansible configuration
+    ├── ansible.cfg             # Ansible configuration
     │
-    ├── files/                 # SSH keys and other static files
+    ├── files/                  # SSH keys and other static files
     │
-    ├── inventories/           # Environment-specific inventories
-    │   └── prod/              # Production environment
+    ├── inventories/            # Environment-specific inventories
+    │   └── prod/               # Production environment
     │
-    ├── kube-apps/             # Kubernetes applications
-    │   ├── applications/      # Individual Argo CD Applications
-    │   ├── applicationsets/   # Argo CD ApplicationSets
-    │   ├── charts/            # Helm charts (vendored)
-    │   ├── manifests/         # Raw Kubernetes manifests
-    │   └── values/            # Helm chart values
+    ├── kube-apps/              # Kubernetes applications
+    │   ├── applications/       # Individual Argo CD Applications
+    │   ├── applicationsets/    # Argo CD ApplicationSets
+    │   ├── charts/             # Helm charts (vendored)
+    │   ├── manifests/          # Raw Kubernetes manifests
+    │   └── values/             # Helm chart values
     │
-    ├── playbooks/             # Ansible playbooks
+    ├── playbooks/              # Ansible playbooks
     │
-    ├── roles/                 # Ansible roles
+    ├── roles/                  # Ansible roles
     │
-    └── vendor-charts.sh       # Script for vendoring Helm charts
+    └── vendor-charts.sh        # Script for vendoring Helm charts
+```
+
 
 ## Evolution and Scaling
 

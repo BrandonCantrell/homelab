@@ -1,0 +1,357 @@
+---
+# ServiceAccount for Homepage
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: homepage
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+---
+# Secret for ServiceAccount Token
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: homepage
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+  annotations:
+    kubernetes.io/service-account.name: homepage
+---
+# ConfigMap for Homepage Settings
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage-settings
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+data:
+  settings.yaml: |
+    title: "K3s Homelab"
+    theme: dark
+    color: blue
+    headerStyle: boxed
+    language: en
+    layout:
+      Smart Home:
+        icon: home
+        columns: 2
+      Kubernetes:
+        icon: kubernetes
+        columns: 3
+      Monitoring:
+        icon: grafana
+        columns: 2
+    quicklaunch:
+      searchDescriptions: true
+      showSearchSuggestions: true
+      provider: duckduckgo
+---
+# ConfigMap for Homepage Services
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage-services
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+data:
+  services.yaml: |
+    - Smart Home:
+        - Home Assistant:
+            href: https://homeassistant.homelab
+            description: "Home automation hub"
+            icon: home-assistant.png
+            status: https://homeassistant.homelab
+    
+        - OctoPrint:
+            href: https://octoprint.homelab
+            description: "3D Printer Control"
+            icon: octoprint.png
+
+    - Kubernetes Infrastructure:
+        - ArgoCD:
+            href: https://192.168.4.10:30080
+            description: "GitOps CD for Kubernetes"
+            icon: argocd.png
+            status: https://192.168.4.10:30080/healthz
+
+        - Longhorn:
+            href: https://longhorn.homelab
+            description: "Cloud native storage"
+            icon: longhorn.png
+            # status: https://longhorn.homelab
+
+        - Cert Manager:
+            href: https://cert-manager.io/docs/
+            description: "Certificate management"
+            icon: cert-manager.png
+            
+        - MetalLB:
+            href: https://metallb.io/
+            description: "Load balancer for bare metal"
+            icon: metallb.png
+            
+    - Monitoring:
+        - Grafana:
+            href: https://grafana.homelab
+            description: "Metrics visualization"
+            icon: grafana.png
+
+        - Prometheus:
+            href: https://prometheus.homelab
+            description: "Metrics collection"
+            icon: prometheus.png
+
+        - Loki:
+            href: https://loki.homelab
+            description: "Log aggregation"
+            icon: loki.png
+---
+# ConfigMap for Homepage Widgets
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage-widgets
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+data:
+  widgets.yaml: |
+    - resources:
+        backend: resources
+        expanded: true
+        cpu: true
+        memory: true
+        disk: true
+    - search:
+        provider: duckduckgo
+        target: _blank
+    - datetime:
+        format:
+          timeStyle: short
+          dateStyle: full
+        locale: en-US
+---
+# ConfigMap for Homepage Bookmarks
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage-bookmarks
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+data:
+  bookmarks.yaml: |
+    - Development:
+        - GitHub:
+            - abbr: GH
+              href: https://github.com/
+        - Kubernetes Docs:
+            - abbr: K8S
+              href: https://kubernetes.io/docs/home/
+        - ArgoCD Docs:
+            - abbr: ARGO
+              href: https://argo-cd.readthedocs.io/
+    - Tools:
+        - ChatGPT:
+            - abbr: GPT
+              href: https://chat.openai.com/
+        - Weather:
+            - abbr: WX
+              href: https://weather.gov/
+---
+# ConfigMap for Homepage Kubernetes Config
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homepage-kubernetes
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+data:
+  kubernetes.yaml: |
+    mode: cluster
+  docker.yaml: ""
+  custom.css: ""
+  custom.js: ""
+---
+# RBAC Role for Homepage
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: homepage-role
+  labels:
+    app.kubernetes.io/name: homepage
+rules:
+  - apiGroups: [""]
+    resources: ["namespaces", "nodes", "pods", "services"]
+    verbs: ["get", "list"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["nodes", "pods"]
+    verbs: ["get", "list"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "daemonsets"]
+    verbs: ["get", "list"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list"]
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["httproutes", "gateways"]
+    verbs: ["get", "list"]
+---
+# RBAC Role Binding for Homepage
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: homepage-rolebinding
+  labels:
+    app.kubernetes.io/name: homepage
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: homepage-role
+subjects:
+  - kind: ServiceAccount
+    name: homepage
+    namespace: homepage
+---
+# Homepage Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: homepage
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: homepage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: homepage
+    spec:
+      serviceAccountName: homepage
+      automountServiceAccountToken: true
+      dnsPolicy: ClusterFirst
+      enableServiceLinks: true
+      containers:
+        - name: homepage
+          image: "ghcr.io/gethomepage/homepage:latest"
+          imagePullPolicy: Always
+          env:
+            - name: HOMEPAGE_ALLOWED_HOSTS
+              value: "home.homelab,localhost"
+            - name: TZ
+              value: "America/Chicago"
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /app/config/settings.yaml
+              name: settings-config
+              subPath: settings.yaml
+            - mountPath: /app/config/services.yaml
+              name: services-config
+              subPath: services.yaml
+            - mountPath: /app/config/widgets.yaml
+              name: widgets-config
+              subPath: widgets.yaml
+            - mountPath: /app/config/bookmarks.yaml
+              name: bookmarks-config
+              subPath: bookmarks.yaml
+            - mountPath: /app/config/kubernetes.yaml
+              name: kubernetes-config
+              subPath: kubernetes.yaml
+            - mountPath: /app/config/docker.yaml
+              name: kubernetes-config
+              subPath: docker.yaml
+            - mountPath: /app/config/custom.css
+              name: kubernetes-config
+              subPath: custom.css
+            - mountPath: /app/config/custom.js
+              name: kubernetes-config
+              subPath: custom.js
+            - mountPath: /app/config/logs
+              name: logs
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "25m"
+            limits:
+              memory: "256Mi"
+              cpu: "100m"
+      volumes:
+        - name: settings-config
+          configMap:
+            name: homepage-settings
+        - name: services-config
+          configMap:
+            name: homepage-services
+        - name: widgets-config
+          configMap:
+            name: homepage-widgets
+        - name: bookmarks-config
+          configMap:
+            name: homepage-bookmarks
+        - name: kubernetes-config
+          configMap:
+            name: homepage-kubernetes
+        - name: logs
+          emptyDir: {}
+---
+# Homepage Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: homepage
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: homepage
+---
+# Homepage Ingress
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: homepage
+  namespace: homepage
+  labels:
+    app.kubernetes.io/name: homepage
+  annotations:
+    cert-manager.io/cluster-issuer: "selfsigned-issuer"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - home.homelab
+      secretName: homepage-tls
+  rules:
+    - host: home.homelab
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: homepage
+                port:
+                  number: 3000

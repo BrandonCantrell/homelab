@@ -6,4 +6,11 @@ controller:
 
   ingressClassResource:
     default: true
-    name: nginx  
+    name: nginx
+    
+  extraArgs:
+    default-ssl-certificate: "cert-manager/wildcard-homelab-tls"
+  
+  config:
+    ssl-redirect: "true"
+    force-ssl-redirect: "true"

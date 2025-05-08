@@ -14,6 +14,9 @@ spec:
       - name: metallb-config
         namespace: metallb-system
         path: k3s-cluster/kube-apps/manifests/metallb-config
+      - name: cert-manager-config
+        namespace: cert-manager
+        path: k3s-cluster/kube-apps/manifests/cert-manager-config
   template:
     metadata:
       name: '{{name}}'

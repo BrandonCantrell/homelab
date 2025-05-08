@@ -74,7 +74,7 @@ data:
 
     - Kubernetes Infrastructure:
         - ArgoCD:
-            href: https://https://192.168.4.10:30080
+            href: https://192.168.4.10:30080
             description: "GitOps CD for Kubernetes"
             icon: argocd.png
             status: https://192.168.4.10:30080/healthz
@@ -135,11 +135,6 @@ data:
           timeStyle: short
           dateStyle: full
         locale: en-US
-    # - kubernetes:
-    #     cluster: k3s
-    #     namespace: true
-    #     label: true
-    #     show_all: true
 ---
 # ConfigMap for Homepage Bookmarks
 apiVersion: v1

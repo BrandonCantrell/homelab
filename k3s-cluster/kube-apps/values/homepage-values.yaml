@@ -1,6 +1,7 @@
 ---
 image:
   repository: ghcr.io/gethomepage/homepage
+  pullPolicy: IfNotPresent
   # tag: v0.6.0
 
 enableRbac: false
@@ -29,89 +30,156 @@ ingress:
     annotations:
       gethomepage.dev/name: "Homepage"
       gethomepage.dev/description: "A modern, secure, highly customizable application dashboard."
-      gethomepage.dev/group: "A New Group"
+      gethomepage.dev/group: "Dashboards"
       gethomepage.dev/icon: "homepage.png"
+      # Add cert-manager annotation
+      cert-manager.io/cluster-issuer: "selfsigned-issuer"
     ingressClassName: nginx
     hosts:
       - host: home.homelab
         paths:
           - path: /
             pathType: Prefix
-    tls: []
+    # Add TLS configuration
+    tls:
+      - hosts:
+          - home.homelab
+        secretName: homepage-tls
 
+# Homepage configuration files
 config:
+  # Settings configuration
+  settings:
+    title: "K3s Homelab"
+    theme: dark
+    color: blue
+    headerStyle: boxed
+    language: en
+    layout:
+      Smart Home:
+        icon: home
+        columns: 2
+      Kubernetes:
+        icon: kubernetes
+        columns: 3
+      Monitoring:
+        icon: grafana
+        columns: 2
+    quicklaunch:
+      searchDescriptions: true
+      showSearchSuggestions: true
+      provider: duckduckgo
+
+  # Bookmarks configuration  
   bookmarks:
-    - Developer:
-        - Github:
+    - Development:
+        - GitHub:
             - abbr: GH
               href: https://github.com/
-  
+        - Kubernetes Docs:
+            - abbr: K8S
+              href: https://kubernetes.io/docs/home/
+        - ArgoCD Docs:
+            - abbr: ARGO
+              href: https://argo-cd.readthedocs.io/
+    - Tools:
+        - ChatGPT:
+            - abbr: GPT
+              href: https://chat.openai.com/
+        - Weather:
+            - abbr: WX
+              href: https://weather.gov/
+
+  # Services configuration
   services:
-    - Smart Home Services:
+    - Smart Home:
         - Home Assistant:
-            href: http://homeassistant.homelab
-            description: "HA"
+            href: https://homeassistant.homelab
+            description: "Home automation hub"
+            icon: home-assistant.png
+            status: https://homeassistant.homelab
   
-        - WLED Nanoleaf Tree:
-            href: http://wled-tree.homelab
-            description: "Tree"
-
         - OctoPrint:
-            href: http://octoprint.homelab
-            description: "OctoPrint"
+            href: https://octoprint.homelab
+            description: "3D Printer Control"
+            icon: octoprint.png
 
-
-    - Kubernetes Resources:
-        - Longhorn UI:
-            href: http://longhorn.homelab
-            description: "Homepage is the best"
-
+    - Kubernetes Infrastructure:
         - ArgoCD:
-            href: https://192.168.4.10:30080
-            description: "ArgoCD"
-    
+            href: https://argocd.homelab
+            description: "GitOps CD for Kubernetes"
+            icon: argocd.png
+            status: https://argocd.homelab/healthz
+
+        - Longhorn:
+            href: https://longhorn.homelab
+            description: "Cloud native storage"
+            icon: longhorn.png
+            status: https://longhorn.homelab
+
+        - Cert Manager:
+            href: https://cert-manager.io/docs/
+            description: "Certificate management"
+            icon: cert-manager.png
+            
+        - MetalLB:
+            href: https://metallb.io/
+            description: "Load balancer for bare metal"
+            icon: metallb.png
+            
     - Monitoring:
-        - Loki Logs:
-            href: http://loki.homelab
-            description: "Loki"
-        - Prometheus:
-            href: http://prometheus.homelab
-            description: "Prometheus"
         - Grafana:
-            href: http://grafana.homelab
-            description: "Grafana"
-        - Alert Manager:
-            href: http://alertmanager.homelab
-            description: "Alert Manager"
-  
+            href: https://grafana.homelab
+            description: "Metrics visualization"
+            icon: grafana.png
+
+        - Prometheus:
+            href: https://prometheus.homelab
+            description: "Metrics collection"
+            icon: prometheus.png
+
+        - Loki:
+            href: https://loki.homelab
+            description: "Log aggregation"
+            icon: loki.png
+            
+  # Widgets configuration
   widgets:
     - resources:
         backend: resources
         expanded: true
         cpu: true
         memory: true
+        disk: true
     - search:
         provider: duckduckgo
         target: _blank
-  
-  kubernetes:
-    mode: disable
-  
-  settings: {}
-  
-  settingsString: |
-    title: Homepage
-    headerStyle: boxed
-    layout:
-      My First Group:
-      My Second Group:
-      My Third Group:
+    - datetime:
+        format:
+          timeStyle: short
+          dateStyle: full
+        locale: en-US
+    - kubernetes:
+        cluster: k3s
+        namespace: true
+        label: true
+        show_all: true
 
+# Environment variables
 env:
   - name: HOMEPAGE_ALLOWED_HOSTS
-    value: "home.homelab"
+    value: "home.homelab,localhost"
+  - name: TZ
+    value: "America/Chicago"  # Set to your timezone
 
 persistence:
+  config:
+    enabled: true
+    type: pvc
+    storageClass: "longhorn"
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    mountPath: "/app/config"
   logs:
     enabled: true
     type: emptyDir
@@ -119,8 +187,8 @@ persistence:
 
 resources:
   requests:
-    memory: "10Mi"
-    cpu: "10m"
+    memory: "64Mi"
+    cpu: "25m"
   limits:
-    memory: "200Mi"
-    cpu: "500m"
+    memory: "256Mi"
+    cpu: "100m"

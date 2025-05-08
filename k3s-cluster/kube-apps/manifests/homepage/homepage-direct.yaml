@@ -74,16 +74,16 @@ data:
 
     - Kubernetes Infrastructure:
         - ArgoCD:
-            href: https://argocd.homelab
+            href: https://https://192.168.4.10:30080
             description: "GitOps CD for Kubernetes"
             icon: argocd.png
-            status: https://argocd.homelab/healthz
+            status: https://192.168.4.10:30080/healthz
 
         - Longhorn:
             href: https://longhorn.homelab
             description: "Cloud native storage"
             icon: longhorn.png
-            status: https://longhorn.homelab
+            # status: https://longhorn.homelab
 
         - Cert Manager:
             href: https://cert-manager.io/docs/
@@ -135,11 +135,11 @@ data:
           timeStyle: short
           dateStyle: full
         locale: en-US
-    - kubernetes:
-        cluster: k3s
-        namespace: true
-        label: true
-        show_all: true
+    # - kubernetes:
+    #     cluster: k3s
+    #     namespace: true
+    #     label: true
+    #     show_all: true
 ---
 # ConfigMap for Homepage Bookmarks
 apiVersion: v1

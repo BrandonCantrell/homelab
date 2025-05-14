@@ -1,41 +1,98 @@
-# Homepage values without complex config (to isolate the issue)
+---
 image:
   repository: ghcr.io/gethomepage/homepage
   tag: v0.8.8
 
-enableRbac: true
+enableRbac: false
 
-extraClusterRoles:
-  - apiGroups: [""]
-    resources: ["namespaces", "nodes", "pods", "services"]
-    verbs: ["get", "list"]
+# extraClusterRoles:
+#   - apiGroups: [""]
+#     resources: ["namespaces", "nodes", "pods", "services"]
+#     verbs: ["get", "list"]
 
-serviceAccount:
-  create: true
+# serviceAccount:
+#   create: true
 
-service:
-  main:
-    ports:
-      http:
-        port: 3000
+# service:
+#   main:
+#     ports:
+#       http:
+#         port: 3000
 
 ingress:
   main:
-    enabled: true
-    className: nginx
+    enabled: false
+    labels:
+      # This label will enable discover of this deployment in Homepage
+      gethomepage.dev/enabled: "true"
     annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /
+      # These annotations will configure how this deployment is shown in Homepage
+      gethomepage.dev/name: "Homepage"
+      gethomepage.dev/description: "A modern, secure, highly customizable application dashboard."
+      gethomepage.dev/group: "A New Group"
+      gethomepage.dev/icon: "homepage.png"
+    ingressClassName: "nginx"
     hosts:
-      - host: home.homelab
+      - host: &host "homepage.local"
         paths:
           - path: /
             pathType: Prefix
+    # tls:
+    #   - hosts:
+    #       - *host
 
 config:
-  settings:
-    title: "Homepage"
+  # To use an existing ConfigMap uncomment this line and specify the name
+  # useExistingConfigMap: existing-homepage-configmap
+  bookmarks:
+    - Developer:
+        - Github:
+            - abbr: GH
+              href: https://github.com/
+
+  services:
+    - My First Group:
+        - My First Service:
+            href: http://localhost/
+            description: Homepage is awesome
+
+    - My Second Group:
+        - My Second Service:
+            href: http://localhost/
+            description: Homepage is the best
+
+    - My Third Group:
+        - My Third Service:
+            href: http://localhost/
+            description: Homepage is 😎
+  widgets:
+    - resources:
+        # change backend to 'kubernetes' to use Kubernetes integration. Requires RBAC.
+        backend: resources
+        expanded: true
+        cpu: true
+        memory: true
+    - search:
+        provider: duckduckgo
+        target: _blank
+    ## Uncomment to enable Kubernetes integration
+    # - kubernetes:
+    #     cluster:
+    #       show: true
+    #       cpu: true
+    #       memory: true
+    #       showLabel: true
+    #       label: "cluster"
+    #     nodes:
+    #       show: true
+    #       cpu: true
+    #       memory: true
+    #       showLabel: true
   kubernetes:
-    mode: cluster
+    # change mode to 'cluster' to use RBAC service account
+    mode: disable
+    # Uncomment to enable gateway api HttpRoute discovery.
+    #gateway: true
 
 env:
   - name: HOMEPAGE_ALLOWED_HOSTS
@@ -51,9 +108,9 @@ resources:
     memory: 512Mi
     cpu: 200m
 
-# Remove persistence section for now to test
-# persistence:
-#   logs:
-#     enabled: true
-#     type: emptyDir
-#     mountPath: /app/config/logs
+Remove persistence section for now to test
+persistence:
+  logs:
+    enabled: true
+    type: emptyDir
+    mountPath: /app/config/logs

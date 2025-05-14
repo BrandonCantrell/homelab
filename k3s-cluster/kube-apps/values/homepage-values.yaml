@@ -189,11 +189,11 @@ env:
   - name: HOMEPAGE_FILE_WATCHER
     value: "false"
 
-persistence:
-  logs:
-    enabled: true
-    type: emptyDir
-    mountPath: /app/config/logs
+# persistence:
+#   logs:
+#     enabled: true
+#     type: emptyDir
+#     mountPath: /app/config/logs
 
 resources:
   requests:

@@ -1,255 +1,204 @@
-# image:
-#   repository: ghcr.io/gethomepage/homepage
-#   tag: v0.8.8
+# Alternative values format for bjw-s common library
+image:
+  repository: ghcr.io/gethomepage/homepage
+  tag: v0.8.8
 
-# # Enable RBAC. RBAC is necessary to use Kubernetes integration
-# enableRbac: true
+# Enable RBAC
+enableRbac: true
 
-# extraClusterRoles:
-#   - apiGroups: [""]
-#     resources: ["namespaces", "nodes", "pods", "services"]
-#     verbs: ["get", "list"]
-#   - apiGroups: ["metrics.k8s.io"]
-#     resources: ["nodes", "pods"]
-#     verbs: ["get", "list"]
-#   - apiGroups: ["apps"]
-#     resources: ["deployments", "statefulsets", "daemonsets"]
-#     verbs: ["get", "list"]
-#   - apiGroups: ["networking.k8s.io"]
-#     resources: ["ingresses"]
-#     verbs: ["get", "list"]
+extraClusterRoles:
+  - apiGroups: [""]
+    resources: ["namespaces", "nodes", "pods", "services"]
+    verbs: ["get", "list"]
+  - apiGroups: ["metrics.k8s.io"]
+    resources: ["nodes", "pods"]
+    verbs: ["get", "list"]
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets", "daemonsets"]
+    verbs: ["get", "list"]
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["ingresses"]
+    verbs: ["get", "list"]
 
-# serviceAccount:
-#   # Specify a different service account name. When blank it will default to the release
-#   # name if *create* is enabled, otherwise it will refer to the default service account.
-#   name: ""
-#   # Create service account. Needed when RBAC is enabled.
-#   create: true
+serviceAccount:
+  name: ""
+  create: true
 
-# service:
-#   main:
-#     ports:
-#       http:
-#         port: 3000
+service:
+  main:
+    ports:
+      http:
+        port: 3000
 
-# controller:
-#   strategy: RollingUpdate
-#   rollingUpdate:
-#     maxSurge: 25%
-#     maxUnavailable: 25%
+# Alternative ingress format for bjw-s common
+ingress:
+  main:
+    enabled: true
+    className: "nginx"
+    annotations:
+      gethomepage.dev/name: "Homepage"
+      gethomepage.dev/description: "A modern, secure, highly customizable application dashboard."
+      gethomepage.dev/group: "Homepage"
+      gethomepage.dev/icon: "homepage.png"
+      nginx.ingress.kubernetes.io/rewrite-target: /
+    hosts:
+      - host: home.homelab
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              name: main
+              port: http
 
-# # Enable the ingress to expose Homepage to the network.
-# ingress:
-#   main:
-#     enabled: true
-#     className: "nginx"
-#     annotations:
-#       gethomepage.dev/name: "Homepage"
-#       gethomepage.dev/description: "A modern, secure, highly customizable application dashboard."
-#       gethomepage.dev/group: "Homepage"
-#       gethomepage.dev/icon: "homepage.png"
-#       nginx.ingress.kubernetes.io/rewrite-target: /
-#     hosts:
-#       - host: home.homelab
-#         paths:
-#           - path: /
-#             pathType: Prefix
-#             service:
-#               name: main
-#               port: http
-#     # tls:
-#     #   - hosts:
-#     #       - *host
+# Your config remains the same
+config:
+  bookmarks:
+    - Developer:
+        - Github:
+            - abbr: GH
+              href: https://github.com/
+        - Kubernetes Docs:
+            - abbr: K8S
+              href: https://kubernetes.io/docs/home/
+        - ArgoCD Docs:
+            - abbr: ARGO
+              href: https://argo-cd.readthedocs.io/
+    - Tools:
+        - ChatGPT:
+            - abbr: GPT
+              href: https://chat.openai.com/
+        - Weather:
+            - abbr: WX
+              href: https://weather.gov/
 
-# # All the config files for Homepage can be specified under their relevant config block.
-# config:
-#   # To use an existing ConfigMap uncomment this line and specify the name
-#   # useExistingConfigMap: existing-homepage-configmap
-#   bookmarks:
-#     - Developer:
-#         - Github:
-#             - abbr: GH
-#               href: https://github.com/
-#         - Kubernetes Docs:
-#             - abbr: K8S
-#               href: https://kubernetes.io/docs/home/
-#         - ArgoCD Docs:
-#             - abbr: ARGO
-#               href: https://argo-cd.readthedocs.io/
-#     - Tools:
-#         - ChatGPT:
-#             - abbr: GPT
-#               href: https://chat.openai.com/
-#         - Weather:
-#             - abbr: WX
-#               href: https://weather.gov/
-
-#   services:
-#     - Smart Home:
-#         - Home Assistant:
-#             href: http://homeassistant.homelab
-#             description: "Home automation hub"
-#             icon: home-assistant.png
+  services:
+    - Smart Home:
+        - Home Assistant:
+            href: http://homeassistant.homelab
+            description: "Home automation hub"
+            icon: home-assistant.png
     
-#         - OctoPrint:
-#             href: http://octoprint.homelab
-#             description: "3D Printer Control"
-#             icon: octoprint.png
+        - OctoPrint:
+            href: http://octoprint.homelab
+            description: "3D Printer Control"
+            icon: octoprint.png
 
-#         - Nanoleaf Tree:
-#             href: http://wled-tree.homelab
-#             description: "WLED Nanoleaf Tree"
-#             icon: wled.png
+        - Nanoleaf Tree:
+            href: http://wled-tree.homelab
+            description: "WLED Nanoleaf Tree"
+            icon: wled.png
 
-#     - Kubernetes Infrastructure:
-#         - ArgoCD:
-#             href: http://192.168.4.10:30080
-#             description: "GitOps CD for Kubernetes"
-#             icon: argocd.png
-#             ping: 192.168.4.10
+    - Kubernetes Infrastructure:
+        - ArgoCD:
+            href: http://192.168.4.10:30080
+            description: "GitOps CD for Kubernetes"
+            icon: argocd.png
+            ping: 192.168.4.10
 
-#         - Longhorn:
-#             href: http://longhorn.homelab
-#             description: "Cloud native storage"
-#             icon: longhorn.png
+        - Longhorn:
+            href: http://longhorn.homelab
+            description: "Cloud native storage"
+            icon: longhorn.png
 
-#         - Cert Manager:
-#             href: https://cert-manager.io/docs/
-#             description: "Certificate management"
-#             icon: cert-manager.png
+        - Cert Manager:
+            href: https://cert-manager.io/docs/
+            description: "Certificate management"
+            icon: cert-manager.png
             
-#         - MetalLB:
-#             href: https://metallb.io/
-#             description: "Load balancer for bare metal"
-#             icon: metallb.png
+        - MetalLB:
+            href: https://metallb.io/
+            description: "Load balancer for bare metal"
+            icon: metallb.png
 
-#     - Monitoring:
-#         - Grafana:
-#             href: http://grafana.homelab
-#             description: "Metrics visualization"
-#             icon: grafana.png
+    - Monitoring:
+        - Grafana:
+            href: http://grafana.homelab
+            description: "Metrics visualization"
+            icon: grafana.png
 
-#         - Prometheus:
-#             href: http://prometheus.homelab
-#             description: "Metrics collection"
-#             icon: prometheus.png
+        - Prometheus:
+            href: http://prometheus.homelab
+            description: "Metrics collection"
+            icon: prometheus.png
 
-#         - Alert Manager:
-#             href: http://alertmanager.homelab
-#             description: "Alert management"
-#             icon: prometheus.png
+        - Alert Manager:
+            href: http://alertmanager.homelab
+            description: "Alert management"
+            icon: prometheus.png
 
-#         - Loki:
-#             href: http://loki.homelab
-#             description: "Log aggregation"
-#             icon: loki.png
+        - Loki:
+            href: http://loki.homelab
+            description: "Log aggregation"
+            icon: loki.png
 
-#   widgets:
-#     - resources:
-#         # change backend to 'kubernetes' to use Kubernetes integration. Requires RBAC.
-#         backend: resources
-#         expanded: false
-#         cpu: true
-#         memory: true
-#     - search:
-#         provider: duckduckgo
-#         target: _blank
-#     # Uncomment to enable Kubernetes integration
-#     - kubernetes:
-#         cluster:
-#           show: true
-#           cpu: true
-#           memory: true
-#           showLabel: true
-#           label: "cluster"
-#         nodes:
-#           show: true
-#           cpu: true
-#           memory: true
-#           showLabel: true
+  widgets:
+    - resources:
+        backend: resources
+        expanded: false
+        cpu: true
+        memory: true
+    - search:
+        provider: duckduckgo
+        target: _blank
+    - kubernetes:
+        cluster:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
+          label: "cluster"
+        nodes:
+          show: true
+          cpu: true
+          memory: true
+          showLabel: true
 
-#   kubernetes:
-#     # change mode to 'cluster' to use RBAC service account
-#     mode: cluster
-#     # Uncomment to enable gateway api HttpRoute discovery.
-#     #gateway: true
+  kubernetes:
+    mode: cluster
 
-#   docker:
+  docker:
+  settings:
 
-#   settings:
+  settingsString: |
+    title: K3s Homelab
+    theme: dark
+    color: blue
+    headerStyle: boxed
+    language: en
+    hideErrors: true
+    hideVersion: true
+    target: _self
+    layout:
+      Smart Home:
+        icon: home
+        columns: 2
+      Kubernetes Infrastructure:
+        icon: kubernetes
+        columns: 3
+      Monitoring:
+        icon: grafana
+        columns: 2
 
-#   # all sections can alternately be appended with "String" such as this example settings. This is useful
-#   # for defining a stable ordering. Unfortunately Go's (and therefore Helm's) toYaml function sorts keys
-#   # and loses and input ordering. Using a string is the best way around this.
-#   settingsString: |
-#     title: K3s Homelab
-#     theme: dark
-#     color: blue
-#     headerStyle: boxed
-#     language: en
-#     hideErrors: true
-#     hideVersion: true
-#     target: _self
-#     layout:
-#       Smart Home:
-#         icon: home
-#         columns: 2
-#       Kubernetes Infrastructure:
-#         icon: kubernetes
-#         columns: 3
-#       Monitoring:
-#         icon: grafana
-#         columns: 2
+env:
+  - name: HOMEPAGE_ALLOWED_HOSTS
+    value: "home.homelab,localhost"
+  - name: TZ
+    value: "America/Chicago"
+  - name: HOMEPAGE_LOG_LEVEL
+    value: "warn"
+  - name: HOMEPAGE_FILE_WATCHER
+    value: "false"
 
-# # -- Main environment variables. Template enabled.
-# # Syntax options:
-# # A) TZ: UTC
-# # B) PASSWD: '{{ .Release.Name }}'
-# # C) PASSWD:
-# #      configMapKeyRef:
-# #        name: config-map-name
-# #        key: key-name
-# # D) PASSWD:
-# #      valueFrom:
-# #        secretKeyRef:
-# #          name: secret-name
-# #          key: key-name
-# #      ...
-# # E) - name: TZ
-# #      value: UTC
-# # F) - name: TZ
-# #      value: '{{ .Release.Name }}'
-# env:
-#   - name: HOMEPAGE_ALLOWED_HOSTS
-#     # This value must be set
-#     # ref: https://gethomepage.dev/installation/#homepage_allowed_hosts
-#     value: "home.homelab,localhost"
-#   - name: TZ
-#     value: "America/Chicago"
-#   - name: HOMEPAGE_LOG_LEVEL
-#     value: "warn"
-#   - name: HOMEPAGE_FILE_WATCHER
-#     value: "false"
+persistence:
+  logs:
+    enabled: true
+    type: emptyDir
+    mountPath: /app/config/logs
 
-# # To include environment variables from other configs or other secrets for use in
-# # Homepage's variable substitutions. Refer to them here.
-# # envFrom:
-# #   - secretRef:
-# #       name: my-secret
-# #   - configMapRef:
-# #       name: my-configmap
-
-# persistence:
-#   logs:
-#     enabled: true
-#     type: emptyDir
-#     mountPath: /app/config/logs
-
-# # Increased resources for better performance
-# resources:
-#   requests:
-#     memory: 128Mi
-#     cpu: 50m
-#   limits:
-#     memory: 512Mi
-#     cpu: 200m
+resources:
+  requests:
+    memory: 128Mi
+    cpu: 50m
+  limits:
+    memory: 512Mi
+    cpu: 200m

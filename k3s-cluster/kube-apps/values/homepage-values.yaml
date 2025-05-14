@@ -1,11 +1,61 @@
-# homepage-values.yaml
-# Optimized configuration for jameswynn/homepage Helm chart
+# homepage-values.yaml for jameswynn/homepage chart v2.1.0+
+# This version uses bjw-s common library format
 
-# Image configuration
-image:
-  repository: ghcr.io/gethomepage/homepage
-  tag: v0.8.8
-  pullPolicy: IfNotPresent
+# Global chart settings
+global:
+  nameOverride: ""
+  fullnameOverride: ""
+
+# Main homepage application configuration
+controllers:
+  main:
+    type: deployment
+    annotations: {}
+    replicas: 1
+    
+    containers:
+      main:
+        image:
+          repository: ghcr.io/gethomepage/homepage
+          tag: v0.8.8
+          pullPolicy: IfNotPresent
+        
+        # Environment variables
+        env:
+          HOMEPAGE_ALLOWED_HOSTS: "home.homelab,localhost"
+          TZ: "America/Chicago"
+          HOMEPAGE_LOG_LEVEL: "warn"
+          HOMEPAGE_FILE_WATCHER: "false"
+        
+        # Probes
+        probes:
+          liveness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /api/ping
+                port: 3000
+              initialDelaySeconds: 10
+              periodSeconds: 30
+          readiness:
+            enabled: true
+            custom: true
+            spec:
+              httpGet:
+                path: /api/ping
+                port: 3000
+              initialDelaySeconds: 5
+              periodSeconds: 10
+        
+        # Resource limits
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 50m
+          limits:
+            memory: 512Mi
+            cpu: 200m
 
 # Service configuration
 service:
@@ -13,12 +63,13 @@ service:
     ports:
       http:
         port: 3000
+        protocol: HTTP
 
 # Ingress configuration
 ingress:
   main:
     enabled: true
-    ingressClassName: nginx
+    className: nginx
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /
     hosts:
@@ -26,32 +77,191 @@ ingress:
         paths:
           - path: /
             pathType: Prefix
-    # Remove TLS to avoid cert-manager issues for now
+            service:
+              name: main
+              port: http
+    # TLS disabled for now to avoid cert-manager issues
     # tls:
     #   - hosts:
     #       - home.homelab
     #     secretName: homepage-tls
 
-# Environment variables
-env:
-  HOMEPAGE_ALLOWED_HOSTS: "home.homelab,localhost"
-  TZ: "America/Chicago"
-  HOMEPAGE_LOG_LEVEL: "warn"
-  HOMEPAGE_FILE_WATCHER: "false"
-
-# Resource limits (increased for better performance)
-resources:
-  requests:
-    memory: 128Mi
-    cpu: 50m
-  limits:
-    memory: 512Mi
-    cpu: 200m
-
-# ServiceAccount creation and RBAC
+# ServiceAccount and RBAC
 serviceAccount:
   create: true
-  automount: true
+  autoMount: true
+
+# Create ConfigMaps for Homepage configuration
+configMaps:
+  homepage-config:
+    enabled: true
+    data:
+      settings.yaml: |
+        title: "K3s Homelab"
+        theme: dark
+        color: blue
+        headerStyle: boxed
+        language: en
+        hideErrors: true
+        hideVersion: true
+        target: _self
+        layout:
+          Smart Home:
+            icon: home
+            columns: 2
+          Kubernetes:
+            icon: kubernetes
+            columns: 3
+          Monitoring:
+            icon: grafana
+            columns: 2
+      
+      services.yaml: |
+        - Smart Home:
+            - Home Assistant:
+                href: http://homeassistant.homelab
+                description: "Home automation hub"
+                icon: home-assistant.png
+        
+            - OctoPrint:
+                href: http://octoprint.homelab
+                description: "3D Printer Control"
+                icon: octoprint.png
+
+            - Nanoleaf Tree:
+                href: http://wled-tree.homelab
+                description: "WLED Nanoleaf Tree"
+                icon: wled.png
+
+        - Kubernetes Infrastructure:
+            - ArgoCD:
+                href: http://192.168.4.10:30080
+                description: "GitOps CD for Kubernetes"
+                icon: argocd.png
+                ping: 192.168.4.10
+
+            - Longhorn:
+                href: http://longhorn.homelab
+                description: "Cloud native storage"
+                icon: longhorn.png
+
+            - Cert Manager:
+                href: https://cert-manager.io/docs/
+                description: "Certificate management"
+                icon: cert-manager.png
+                
+            - MetalLB:
+                href: https://metallb.io/
+                description: "Load balancer for bare metal"
+                icon: metallb.png
+
+        - Monitoring:
+            - Grafana:
+                href: http://grafana.homelab
+                description: "Metrics visualization"
+                icon: grafana.png
+
+            - Prometheus:
+                href: http://prometheus.homelab
+                description: "Metrics collection"
+                icon: prometheus.png
+
+            - Alert Manager:
+                href: http://alertmanager.homelab
+                description: "Alert management"
+                icon: prometheus.png
+
+            - Loki:
+                href: http://loki.homelab
+                description: "Log aggregation"
+                icon: loki.png
+      
+      widgets.yaml: |
+        - resources:
+            backend: resources
+            expanded: false
+            cpu: true
+            memory: true
+            refresh: 5000
+        - search:
+            provider: duckduckgo
+            target: _blank
+        - datetime:
+            format:
+              timeStyle: short
+              dateStyle: short
+            locale: en-US
+      
+      bookmarks.yaml: |
+        - Development:
+            - GitHub:
+                - abbr: GH
+                  href: https://github.com/
+            - Kubernetes Docs:
+                - abbr: K8S
+                  href: https://kubernetes.io/docs/home/
+            - ArgoCD Docs:
+                - abbr: ARGO
+                  href: https://argo-cd.readthedocs.io/
+        - Tools:
+            - ChatGPT:
+                - abbr: GPT
+                  href: https://chat.openai.com/
+            - Weather:
+                - abbr: WX
+                  href: https://weather.gov/
+      
+      kubernetes.yaml: |
+        mode: cluster
+        resources:
+          - ingresses
+          - nodes
+          - pods
+          - services
+        namespace_selector: "homepage,longhorn-system,monitoring,argocd"
+      
+      custom.css: |
+        /* Performance optimizations */
+        .card {
+          transition: none !important;
+        }
+        * {
+          animation-duration: 0.1s !important;
+          transition-duration: 0.1s !important;
+        }
+      
+      docker.yaml: ""
+      custom.js: ""
+
+# Persistence configuration
+persistence:
+  config:
+    enabled: true
+    type: configMap
+    name: homepage-config
+    globalMounts:
+      - path: /app/config/settings.yaml
+        subPath: settings.yaml
+      - path: /app/config/services.yaml
+        subPath: services.yaml
+      - path: /app/config/widgets.yaml
+        subPath: widgets.yaml
+      - path: /app/config/bookmarks.yaml
+        subPath: bookmarks.yaml
+      - path: /app/config/kubernetes.yaml
+        subPath: kubernetes.yaml
+      - path: /app/config/docker.yaml
+        subPath: docker.yaml
+      - path: /app/config/custom.css
+        subPath: custom.css
+      - path: /app/config/custom.js
+        subPath: custom.js
+  
+  logs:
+    enabled: true
+    type: emptyDir
+    globalMounts:
+      - path: /app/config/logs
 
 # RBAC for Kubernetes integration
 rbac:
@@ -69,151 +279,3 @@ rbac:
     - apiGroups: ["networking.k8s.io"]
       resources: ["ingresses"]
       verbs: ["get", "list"]
-
-# Configuration files as ConfigMaps
-config:
-  # settings.yaml configuration
-  settings.yaml: |
-    title: "K3s Homelab"
-    theme: dark
-    color: blue
-    headerStyle: boxed
-    language: en
-    hideErrors: true
-    hideVersion: true
-    target: _self
-    layout:
-      Smart Home:
-        icon: home
-        columns: 2
-      Kubernetes:
-        icon: kubernetes
-        columns: 3
-      Monitoring:
-        icon: grafana
-        columns: 2
-
-  # services.yaml configuration
-  services.yaml: |
-    - Smart Home:
-        - Home Assistant:
-            href: http://homeassistant.homelab
-            description: "Home automation hub"
-            icon: home-assistant.png
-    
-        - OctoPrint:
-            href: http://octoprint.homelab
-            description: "3D Printer Control"
-            icon: octoprint.png
-
-        - Nanoleaf Tree:
-            href: http://wled-tree.homelab
-            description: "WLED Nanoleaf Tree"
-            icon: wled.png
-
-    - Kubernetes Infrastructure:
-        - ArgoCD:
-            href: http://192.168.4.10:30080
-            description: "GitOps CD for Kubernetes"
-            icon: argocd.png
-            ping: 192.168.4.10
-
-        - Longhorn:
-            href: http://longhorn.homelab
-            description: "Cloud native storage"
-            icon: longhorn.png
-
-        - Cert Manager:
-            href: https://cert-manager.io/docs/
-            description: "Certificate management"
-            icon: cert-manager.png
-            
-        - MetalLB:
-            href: https://metallb.io/
-            description: "Load balancer for bare metal"
-            icon: metallb.png
-
-    - Monitoring:
-        - Grafana:
-            href: http://grafana.homelab
-            description: "Metrics visualization"
-            icon: grafana.png
-
-        - Prometheus:
-            href: http://prometheus.homelab
-            description: "Metrics collection"
-            icon: prometheus.png
-
-        - Alert Manager:
-            href: http://alertmanager.homelab
-            description: "Alert management"
-            icon: prometheus.png
-
-        - Loki:
-            href: http://loki.homelab
-            description: "Log aggregation"
-            icon: loki.png
-
-  # widgets.yaml configuration
-  widgets.yaml: |
-    - resources:
-        backend: resources
-        expanded: false
-        cpu: true
-        memory: true
-        refresh: 5000
-    - search:
-        provider: duckduckgo
-        target: _blank
-    - datetime:
-        format:
-          timeStyle: short
-          dateStyle: short
-        locale: en-US
-
-  # bookmarks.yaml configuration
-  bookmarks.yaml: |
-    - Development:
-        - GitHub:
-            - abbr: GH
-              href: https://github.com/
-        - Kubernetes Docs:
-            - abbr: K8S
-              href: https://kubernetes.io/docs/home/
-        - ArgoCD Docs:
-            - abbr: ARGO
-              href: https://argo-cd.readthedocs.io/
-    - Tools:
-        - ChatGPT:
-            - abbr: GPT
-              href: https://chat.openai.com/
-        - Weather:
-            - abbr: WX
-              href: https://weather.gov/
-
-  # kubernetes.yaml configuration
-  kubernetes.yaml: |
-    mode: cluster
-    resources:
-      - ingresses
-      - nodes
-      - pods
-      - services
-    namespace_selector: "homepage,longhorn-system,monitoring,argocd"
-
-  # custom.css for performance
-  custom.css: |
-    /* Performance optimizations */
-    .card {
-      transition: none !important;
-    }
-    * {
-      animation-duration: 0.1s !important;
-      transition-duration: 0.1s !important;
-    }
-
-# Persistence for logs (optional)
-persistence:
-  logs:
-    enabled: true
-    type: emptyDir

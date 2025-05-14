@@ -40,7 +40,7 @@ spec:
         namespace: homepage
         repoURL: https://jameswynn.github.io/helm-charts
         chart: homepage
-        valuesPath: k3s-cluster/kube-apps/values/homepage-values.yaml
+        valuesPath: ../../values/homepage-values.yaml
       - name: homeassistant
         namespace: homeassistant
         path: k3s-cluster/kube-apps/charts/home-assistant

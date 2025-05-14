@@ -1,6 +1,45 @@
+# Comprehensive Homepage values file
+# Uses your external ConfigMap but configures everything else
+
+# Image configuration
+image:
+  repository: ghcr.io/gethomepage/homepage
+  tag: v0.8.8
+  pullPolicy: IfNotPresent
+
+# Use your external ConfigMap
 config:
   useExistingConfigMap: "homepage-config"
 
+# Enable RBAC for Kubernetes integration (if you want it)
+enableRbac: true
+
+# ServiceAccount configuration
+serviceAccount:
+  create: true
+  name: ""
+
+# Service configuration
+service:
+  main:
+    enabled: true
+    type: ClusterIP
+    ports:
+      http:
+        port: 3000
+        targetPort: http
+        protocol: HTTP
+
+# Controller configuration
+controller:
+  type: deployment
+  replicas: 1
+  strategy: RollingUpdate
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 25%
+
+# Enable ingress
 ingress:
   main:
     enabled: true
@@ -10,5 +49,97 @@ ingress:
         paths:
           - path: /
             pathType: Prefix
+            service:
+              name: homepage
+              port: 3000
+    # Optional: Add TLS
+    # tls:
+    #   - hosts:
+    #       - home.homelab
+    #     secretName: homepage-tls
 
-enableRbac: false
+# Environment variables
+env:
+  - name: HOMEPAGE_ALLOWED_HOSTS
+    value: "home.homelab,localhost"
+  - name: TZ
+    value: "America/Chicago"
+
+# Persistence for logs
+persistence:
+  logs:
+    enabled: true
+    type: emptyDir
+    mountPath: /app/config/logs
+
+# Resource limits and requests
+resources:
+  requests:
+    memory: 128Mi
+    cpu: 50m
+  limits:
+    memory: 512Mi
+    cpu: 200m
+
+# Pod security context
+podSecurityContext:
+  fsGroup: 65534
+
+# Container security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 65534
+  runAsGroup: 65534
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+# Pod annotations
+podAnnotations: {}
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}
+
+# Probes configuration
+probes:
+  liveness:
+    enabled: true
+    type: HTTP
+    spec:
+      httpGet:
+        path: /api/ping
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+  readiness:
+    enabled: true
+    type: HTTP
+    spec:
+      httpGet:
+        path: /api/ping
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 3
+  startup:
+    enabled: true
+    type: HTTP
+    spec:
+      httpGet:
+        path: /api/ping
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 5
+      failureThreshold: 30

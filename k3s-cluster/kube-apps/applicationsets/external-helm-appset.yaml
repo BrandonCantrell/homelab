@@ -38,8 +38,7 @@ spec:
         valuesPath: ../../values/metallb-values.yaml
       - name: homepage
         namespace: homepage
-        repoURL: k3s-cluster/kube-apps/charts/homepage
-        chart: homepage
+        path: k3s-cluster/kube-apps/charts/homepage
         valuesPath: ../../values/homepage-values.yaml
       - name: homeassistant
         namespace: homeassistant
@@ -62,7 +61,6 @@ spec:
         helm:
           releaseName: '{{name}}'
           valueFiles:
-          - '{{valuesPath}}'
           - '{{valuesPath}}'
       destination:
         server: https://kubernetes.default.svc

@@ -5,19 +5,11 @@ image:
 
 enableRbac: false
 
-# extraClusterRoles:
-#   - apiGroups: [""]
-#     resources: ["namespaces", "nodes", "pods", "services"]
-#     verbs: ["get", "list"]
-
-# serviceAccount:
-#   create: true
-
-# service:
-#   main:
-#     ports:
-#       http:
-#         port: 3000
+service:
+  main:
+    ports:
+      http:
+        port: 3000
 
 ingress:
   main:
@@ -33,7 +25,7 @@ ingress:
       gethomepage.dev/icon: "homepage.png"
     ingressClassName: "nginx"
     hosts:
-      - host: &host "homepage.local"
+      - host: "homepage.local"
         paths:
           - path: /
             pathType: Prefix
@@ -75,24 +67,6 @@ config:
     - search:
         provider: duckduckgo
         target: _blank
-    ## Uncomment to enable Kubernetes integration
-    # - kubernetes:
-    #     cluster:
-    #       show: true
-    #       cpu: true
-    #       memory: true
-    #       showLabel: true
-    #       label: "cluster"
-    #     nodes:
-    #       show: true
-    #       cpu: true
-    #       memory: true
-    #       showLabel: true
-  kubernetes:
-    # change mode to 'cluster' to use RBAC service account
-    mode: disable
-    # Uncomment to enable gateway api HttpRoute discovery.
-    #gateway: true
 
 env:
   - name: HOMEPAGE_ALLOWED_HOSTS
@@ -108,7 +82,7 @@ resources:
     memory: 512Mi
     cpu: 200m
 
-Remove persistence section for now to test
+
 persistence:
   logs:
     enabled: true

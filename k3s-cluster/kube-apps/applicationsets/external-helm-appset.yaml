@@ -39,7 +39,7 @@ spec:
       - name: homepage
         namespace: homepage
         path: k3s-cluster/kube-apps/charts/homepage
-        valuesPath: k3s-cluster/charts/homepage/values.yaml
+        valuesPath: ../../values/homepage-values.yaml
       - name: homeassistant
         namespace: homeassistant
         path: k3s-cluster/kube-apps/charts/home-assistant

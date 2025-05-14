@@ -1,27 +1,16 @@
-# Alternative values format for bjw-s common library
+# Homepage values without complex config (to isolate the issue)
 image:
   repository: ghcr.io/gethomepage/homepage
   tag: v0.8.8
 
-# Enable RBAC
 enableRbac: true
 
 extraClusterRoles:
   - apiGroups: [""]
     resources: ["namespaces", "nodes", "pods", "services"]
     verbs: ["get", "list"]
-  - apiGroups: ["metrics.k8s.io"]
-    resources: ["nodes", "pods"]
-    verbs: ["get", "list"]
-  - apiGroups: ["apps"]
-    resources: ["deployments", "statefulsets", "daemonsets"]
-    verbs: ["get", "list"]
-  - apiGroups: ["networking.k8s.io"]
-    resources: ["ingresses"]
-    verbs: ["get", "list"]
 
 serviceAccount:
-  name: ""
   create: true
 
 service:
@@ -30,170 +19,29 @@ service:
       http:
         port: 3000
 
-# Alternative ingress format for bjw-s common
 ingress:
   main:
     enabled: true
-    className: "nginx"
+    className: nginx
     annotations:
-      gethomepage.dev/name: "Homepage"
-      gethomepage.dev/description: "A modern, secure, highly customizable application dashboard."
-      gethomepage.dev/group: "Homepage"
-      gethomepage.dev/icon: "homepage.png"
       nginx.ingress.kubernetes.io/rewrite-target: /
     hosts:
       - host: home.homelab
         paths:
           - path: /
             pathType: Prefix
-            service:
-              name: main
-              port: http
 
-# Your config remains the same
 config:
-  bookmarks:
-    - Developer:
-        - Github:
-            - abbr: GH
-              href: https://github.com/
-        - Kubernetes Docs:
-            - abbr: K8S
-              href: https://kubernetes.io/docs/home/
-        - ArgoCD Docs:
-            - abbr: ARGO
-              href: https://argo-cd.readthedocs.io/
-    - Tools:
-        - ChatGPT:
-            - abbr: GPT
-              href: https://chat.openai.com/
-        - Weather:
-            - abbr: WX
-              href: https://weather.gov/
-
-  services:
-    - Smart Home:
-        - Home Assistant:
-            href: http://homeassistant.homelab
-            description: "Home automation hub"
-            icon: home-assistant.png
-    
-        - OctoPrint:
-            href: http://octoprint.homelab
-            description: "3D Printer Control"
-            icon: octoprint.png
-
-        - Nanoleaf Tree:
-            href: http://wled-tree.homelab
-            description: "WLED Nanoleaf Tree"
-            icon: wled.png
-
-    - Kubernetes Infrastructure:
-        - ArgoCD:
-            href: http://192.168.4.10:30080
-            description: "GitOps CD for Kubernetes"
-            icon: argocd.png
-            ping: 192.168.4.10
-
-        - Longhorn:
-            href: http://longhorn.homelab
-            description: "Cloud native storage"
-            icon: longhorn.png
-
-        - Cert Manager:
-            href: https://cert-manager.io/docs/
-            description: "Certificate management"
-            icon: cert-manager.png
-            
-        - MetalLB:
-            href: https://metallb.io/
-            description: "Load balancer for bare metal"
-            icon: metallb.png
-
-    - Monitoring:
-        - Grafana:
-            href: http://grafana.homelab
-            description: "Metrics visualization"
-            icon: grafana.png
-
-        - Prometheus:
-            href: http://prometheus.homelab
-            description: "Metrics collection"
-            icon: prometheus.png
-
-        - Alert Manager:
-            href: http://alertmanager.homelab
-            description: "Alert management"
-            icon: prometheus.png
-
-        - Loki:
-            href: http://loki.homelab
-            description: "Log aggregation"
-            icon: loki.png
-
-  widgets:
-    - resources:
-        backend: resources
-        expanded: false
-        cpu: true
-        memory: true
-    - search:
-        provider: duckduckgo
-        target: _blank
-    - kubernetes:
-        cluster:
-          show: true
-          cpu: true
-          memory: true
-          showLabel: true
-          label: "cluster"
-        nodes:
-          show: true
-          cpu: true
-          memory: true
-          showLabel: true
-
+  settings:
+    title: "Homepage"
   kubernetes:
     mode: cluster
-
-  docker:
-  settings:
-
-  settingsString: |
-    title: K3s Homelab
-    theme: dark
-    color: blue
-    headerStyle: boxed
-    language: en
-    hideErrors: true
-    hideVersion: true
-    target: _self
-    layout:
-      Smart Home:
-        icon: home
-        columns: 2
-      Kubernetes Infrastructure:
-        icon: kubernetes
-        columns: 3
-      Monitoring:
-        icon: grafana
-        columns: 2
 
 env:
   - name: HOMEPAGE_ALLOWED_HOSTS
     value: "home.homelab,localhost"
   - name: TZ
     value: "America/Chicago"
-  - name: HOMEPAGE_LOG_LEVEL
-    value: "warn"
-  - name: HOMEPAGE_FILE_WATCHER
-    value: "false"
-
-# persistence:
-#   logs:
-#     enabled: true
-#     type: emptyDir
-#     mountPath: /app/config/logs
 
 resources:
   requests:
@@ -202,3 +50,10 @@ resources:
   limits:
     memory: 512Mi
     cpu: 200m
+
+# Remove persistence section for now to test
+# persistence:
+#   logs:
+#     enabled: true
+#     type: emptyDir
+#     mountPath: /app/config/logs

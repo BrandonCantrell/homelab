@@ -35,6 +35,7 @@ data:
     color: blue
     headerStyle: boxed
     language: en
+    # Optimized layout for performance
     layout:
       Smart Home:
         icon: home
@@ -45,10 +46,16 @@ data:
       Monitoring:
         icon: grafana
         columns: 2
+    # Disable heavy features for better performance
     quicklaunch:
-      searchDescriptions: true
-      showSearchSuggestions: true
+      searchDescriptions: false
+      showSearchSuggestions: false
       provider: duckduckgo
+    # Performance optimizations
+    hideErrors: true
+    hideVersion: true
+    hideTitle: false
+    target: _self
 ---
 # ConfigMap for Homepage Services
 apiVersion: v1
@@ -62,56 +69,70 @@ data:
   services.yaml: |
     - Smart Home:
         - Home Assistant:
-            href: https://homeassistant.homelab
+            href: http://homeassistant.homelab
             description: "Home automation hub"
             icon: home-assistant.png
-            status: https://homeassistant.homelab
+            # Removed status check - causes delays
     
         - OctoPrint:
-            href: https://octoprint.homelab
+            href: http://octoprint.homelab
             description: "3D Printer Control"
             icon: octoprint.png
+            # Commented out unreachable host
+            # href: http://192.168.1.10
+
+        - Nanoleaf Tree:
+            href: http://wled-tree.homelab
+            description: "WLED Nanoleaf Tree"
+            icon: wled.png
 
     - Kubernetes Infrastructure:
         - ArgoCD:
-            href: https://192.168.4.10:30080
+            href: http://192.168.4.10:30080
             description: "GitOps CD for Kubernetes"
             icon: argocd.png
-            status: https://192.168.4.10:30080/healthz
+            # Simplified status check to avoid SSL issues
+            ping: 192.168.4.10
 
         - Longhorn:
-            href: https://longhorn.homelab
+            href: http://longhorn.homelab
             description: "Cloud native storage"
             icon: longhorn.png
-            # status: https://longhorn.homelab
 
         - Cert Manager:
             href: https://cert-manager.io/docs/
             description: "Certificate management"
             icon: cert-manager.png
+            # External link - no status check needed
             
         - MetalLB:
             href: https://metallb.io/
             description: "Load balancer for bare metal"
             icon: metallb.png
-            
+            # External link - no status check needed
+
     - Monitoring:
         - Grafana:
-            href: https://grafana.homelab
+            href: http://grafana.homelab
             description: "Metrics visualization"
             icon: grafana.png
 
         - Prometheus:
-            href: https://prometheus.homelab
+            href: http://prometheus.homelab
             description: "Metrics collection"
             icon: prometheus.png
 
+        - Alert Manager:
+            href: http://alertmanager.homelab
+            description: "Alert management"
+            icon: prometheus.png
+
         - Loki:
-            href: https://loki.homelab
+            href: http://loki.homelab
             description: "Log aggregation"
             icon: loki.png
 ---
-# ConfigMap for Homepage Widgets
+# ConfigMap for Homepage Widgets (optimized)
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -123,17 +144,19 @@ data:
   widgets.yaml: |
     - resources:
         backend: resources
-        expanded: true
+        expanded: false  # Collapsed by default for faster loading
         cpu: true
         memory: true
-        disk: true
+        disk: false  # Disable disk monitoring for performance
+        # Refresh less frequently
+        refresh: 5000
     - search:
         provider: duckduckgo
         target: _blank
     - datetime:
         format:
           timeStyle: short
-          dateStyle: full
+          dateStyle: short  # Shortened format
         locale: en-US
 ---
 # ConfigMap for Homepage Bookmarks
@@ -175,8 +198,25 @@ metadata:
 data:
   kubernetes.yaml: |
     mode: cluster
+    # Optimize kubernetes integration
+    resources:
+      - ingresses
+      - nodes
+      - pods
+      - services
+    # Reduce API calls
+    namespace_selector: "homepage,longhorn-system,monitoring,argocd"
   docker.yaml: ""
-  custom.css: ""
+  custom.css: |
+    /* Performance optimizations */
+    .card {
+      transition: none !important;
+    }
+    /* Reduce animations */
+    * {
+      animation-duration: 0.1s !important;
+      transition-duration: 0.1s !important;
+    }
   custom.js: ""
 ---
 # RBAC Role for Homepage
@@ -199,9 +239,6 @@ rules:
   - apiGroups: ["networking.k8s.io"]
     resources: ["ingresses"]
     verbs: ["get", "list"]
-  - apiGroups: ["gateway.networking.k8s.io"]
-    resources: ["httproutes", "gateways"]
-    verbs: ["get", "list"]
 ---
 # RBAC Role Binding for Homepage
 apiVersion: rbac.authorization.k8s.io/v1
@@ -219,7 +256,7 @@ subjects:
     name: homepage
     namespace: homepage
 ---
-# Homepage Deployment
+# Homepage Deployment (optimized)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -243,20 +280,40 @@ spec:
       serviceAccountName: homepage
       automountServiceAccountToken: true
       dnsPolicy: ClusterFirst
-      enableServiceLinks: true
+      enableServiceLinks: false  # Disable service links for performance
       containers:
         - name: homepage
-          image: "ghcr.io/gethomepage/homepage:latest"
-          imagePullPolicy: Always
+          image: "ghcr.io/gethomepage/homepage:v0.8.8"  # Pin to specific version
+          imagePullPolicy: IfNotPresent  # Changed from Always
           env:
             - name: HOMEPAGE_ALLOWED_HOSTS
               value: "home.homelab,localhost"
             - name: TZ
               value: "America/Chicago"
+            # Performance environment variables
+            - name: HOMEPAGE_LOG_LEVEL
+              value: "warn"  # Reduce logging
+            - name: HOMEPAGE_FILE_WATCHER
+              value: "false"  # Disable file watching
           ports:
             - name: http
               containerPort: 3000
               protocol: TCP
+          # Optimized health checks
+          livenessProbe:
+            httpGet:
+              path: /api/ping
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/ping
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
           volumeMounts:
             - mountPath: /app/config/settings.yaml
               name: settings-config
@@ -284,13 +341,14 @@ spec:
               subPath: custom.js
             - mountPath: /app/config/logs
               name: logs
+          # Increased resource limits for better performance
           resources:
             requests:
-              memory: "64Mi"
-              cpu: "25m"
+              memory: "128Mi"  # Increased from 64Mi
+              cpu: "50m"       # Increased from 25m
             limits:
-              memory: "256Mi"
-              cpu: "100m"
+              memory: "512Mi"  # Increased from 256Mi
+              cpu: "200m"      # Increased from 100m
       volumes:
         - name: settings-config
           configMap:
@@ -328,7 +386,7 @@ spec:
   selector:
     app.kubernetes.io/name: homepage
 ---
-# Homepage Ingress
+# Homepage Ingress (simplified)
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -337,13 +395,16 @@ metadata:
   labels:
     app.kubernetes.io/name: homepage
   annotations:
-    cert-manager.io/cluster-issuer: "selfsigned-issuer"
+    # Removed cert-manager for now to avoid SSL issues
+    # cert-manager.io/cluster-issuer: "selfsigned-issuer"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - home.homelab
-      secretName: homepage-tls
+  # Removed TLS for now to avoid certificate issues
+  # tls:
+  #   - hosts:
+  #       - home.homelab
+  #     secretName: homepage-tls
   rules:
     - host: home.homelab
       http:

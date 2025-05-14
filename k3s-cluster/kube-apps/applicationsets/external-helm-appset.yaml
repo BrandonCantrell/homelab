@@ -38,8 +38,13 @@ spec:
         valuesPath: ../../values/metallb-values.yaml
       - name: homepage
         namespace: homepage
-        path: k3s-cluster/kube-apps/charts/homepage
-        valuesPath: ../../values/homepage-values.yaml
+        repoURL: https://jameswynn.github.io/helm-charts
+        chart: homepage
+        targetRevision: 2.1.0
+        valuesPath: k3s-cluster/kube-apps/values/homepage-values.yaml
+        dependencyRepos:
+          - name: bjw-s
+            url: https://bjw-s.github.io/helm-charts
       - name: homeassistant
         namespace: homeassistant
         path: k3s-cluster/kube-apps/charts/home-assistant

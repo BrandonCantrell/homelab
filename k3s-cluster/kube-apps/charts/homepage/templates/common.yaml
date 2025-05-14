@@ -44,7 +44,9 @@ mountPath: /app/config
 {{ $checkSum := ( print .Values | sha256sum ) -}}
 
 {{- $_ := set .Values.persistence "homepage-base-config" (include "homepage.baseConfigVolume" . | fromYaml) -}}
+{{- if not .Values.config.useExistingConfigMap -}}
 {{- $_ := set .Values.persistence "homepage-config" (include "homepage.configVolume" . | fromYaml) -}}
+{{- end -}}
 
 {{- $_ := set .Values.controller.annotations "values-checksum" $checkSum -}}
 {{- $_ := set .Values.podAnnotations "values-checksum" $checkSum -}}

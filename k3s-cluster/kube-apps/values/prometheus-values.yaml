@@ -5,14 +5,14 @@ alertmanager:
     enabled: true
     storageClassName: longhorn
     size: 2Gi
-ingress:
-  enabled: true
-  ingressClassName: nginx
-  hosts:
-    - host: alertmanager.homelab     
-      paths:
-        - path: /
-          pathType: Prefix
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - host: alertmanager.homelab
+        paths:
+          - path: /
+            pathType: Prefix
 
 
 server:
@@ -29,14 +29,13 @@ server:
     enabled: true
     storageClassName: longhorn
     size: 10Gi
-ingress:
-  enabled: true
-  ingressClassName: nginx
-  hosts:
-    - host: prometheus.homelab     
-      paths:
-        - path: /
-          pathType: Prefix
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus.homelab     
+    path: /
+    pathType: Prefix
   resources:
     requests:
       cpu: 200m

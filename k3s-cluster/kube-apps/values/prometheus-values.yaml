@@ -7,10 +7,12 @@ alertmanager:
     size: 2Gi
   ingress:
     enabled: true
+    host: alertmanager.homelab
     ingressClassName: nginx
-    pathType: Prefix
-    hosts: 
-      - alertmanager.homelab
+    paths:
+      - path: /
+        pathType: Prefix
+
 
 server:
   retention: 7d      
@@ -28,10 +30,11 @@ server:
     size: 10Gi
   ingress:
     enabled: true
+    host: prometheus.homelab
     ingressClassName: nginx
-    pathType: Prefix
     hosts:
-      - prometheus.homelab
+      - path: /
+        pathType: Prefix
   resources:
     requests:
       cpu: 200m

@@ -13,7 +13,7 @@ service:
 
 ingress:
   main:
-    enabled: false
+    enabled: true
     labels:
       # This label will enable discover of this deployment in Homepage
       gethomepage.dev/enabled: "true"

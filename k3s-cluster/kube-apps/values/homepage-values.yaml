@@ -34,23 +34,23 @@ ingress:
     #       - *host
 
 
-env:
-  - name: HOMEPAGE_ALLOWED_HOSTS
-    value: "home.homelab,localhost"
-  - name: TZ
-    value: "America/Chicago"
+# env:
+#   - name: HOMEPAGE_ALLOWED_HOSTS
+#     value: "home.homelab,localhost"
+#   - name: TZ
+#     value: "America/Chicago"
 
-resources:
-  requests:
-    memory: 128Mi
-    cpu: 50m
-  limits:
-    memory: 512Mi
-    cpu: 200m
+# resources:
+#   requests:
+#     memory: 128Mi
+#     cpu: 50m
+#   limits:
+#     memory: 512Mi
+#     cpu: 200m
 
 
-persistence:
-  logs:
-    enabled: true
-    type: emptyDir
-    mountPath: /app/config/logs
+# persistence:
+#   logs:
+#     enabled: true
+#     type: emptyDir
+#     mountPath: /app/config/logs

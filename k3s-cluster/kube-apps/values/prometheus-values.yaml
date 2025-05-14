@@ -6,7 +6,7 @@ alertmanager:
     storageClassName: longhorn
     size: 2Gi
   ingress:
-    enabled: true
+    enabled: false
     host: alertmanager.homelab
     ingressClassName: nginx
     paths:
@@ -29,7 +29,7 @@ server:
     storageClassName: longhorn
     size: 10Gi
   ingress:
-    enabled: true
+    enabled: false
     host: prometheus.homelab
     ingressClassName: nginx
     hosts:

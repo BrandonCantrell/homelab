@@ -62,7 +62,6 @@ spec:
           releaseName: '{{name}}'
           valueFiles:
           - '{{valuesPath}}'
-          - '{{valuesPath}}'
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{namespace}}'

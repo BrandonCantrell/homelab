@@ -30,11 +30,12 @@ spec:
       {{- with .Values.controller.cronjob.ttlSecondsAfterFinished }}
       ttlSecondsAfterFinished: {{ . }}
       {{- end }}
+      backoffLimit: {{ .Values.controller.cronjob.backoffLimit }}
       template:
         metadata:
           {{- with include ("bjw-s.common.lib.metadata.podAnnotations") . }}
           annotations:
-            {{- . | nindent 10 }}
+            {{- . | nindent 12 }}
           {{- end }}
           labels:
             {{- include "bjw-s.common.lib.metadata.selectorLabels" . | nindent 12 }}

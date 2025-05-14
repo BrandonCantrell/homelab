@@ -6,25 +6,36 @@ alertmanager:
     storageClassName: longhorn
     size: 2Gi
   ingress:
-    enabled: false
+    enabled: true
     ingressClassName: nginx
-    pathType: Prefix
-    hosts: 
-      - alertmanager.homelab
+    hosts:
+      - host: alertmanager.homelab
+        paths:
+          - path: /
+            pathType: Prefix
+
 
 server:
-  retention: 15d
+  retention: 7d      
+  retentionSize: 8GB
+  
+  # Global scrape configuration
+  global:
+    scrape_interval: 30s 
+    scrape_timeout: 10s
+    evaluation_interval: 30s
+  
   persistentVolume:
     enabled: true
     storageClassName: longhorn
     size: 10Gi
   ingress:
-    enabled: false
+    enabled: true
     ingressClassName: nginx
-    pathType: Prefix
     hosts:
-      - prometheus.homelab
-      - prometheus.homelab
+      - prometheus.homelab     
+    path: /
+    pathType: Prefix
   resources:
     requests:
       cpu: 200m
@@ -46,10 +57,9 @@ serviceMonitorSelectorNilUsesHelmValues: false
 serviceMonitorSelector: {}
 serviceMonitorNamespaceSelector: {}
 
-# Configure scrape configs for common services
 additionalScrapeConfigs:
   - job_name: 'kubernetes-nodes-cadvisor'
-    scrape_interval: 10s
+    scrape_interval: 60s  
     scrape_timeout: 10s
     scheme: https
     tls_config:

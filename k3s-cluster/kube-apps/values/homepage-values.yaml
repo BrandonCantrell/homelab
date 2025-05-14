@@ -1,281 +1,169 @@
-# homepage-values.yaml for jameswynn/homepage chart v2.1.0+
-# This version uses bjw-s common library format
+image:
+  repository: ghcr.io/gethomepage/homepage
+  # tag: v0.6.0
 
-# Global chart settings
-global:
-  nameOverride: ""
-  fullnameOverride: ""
+# Enable RBAC. RBAC is necessary to use Kubernetes integration
+enableRbac: false
 
-# Main homepage application configuration
-controllers:
-  main:
-    type: deployment
-    annotations: {}
-    replicas: 1
-    
-    containers:
-      main:
-        image:
-          repository: ghcr.io/gethomepage/homepage
-          tag: v0.8.8
-          pullPolicy: IfNotPresent
-        
-        # Environment variables
-        env:
-          HOMEPAGE_ALLOWED_HOSTS: "home.homelab,localhost"
-          TZ: "America/Chicago"
-          HOMEPAGE_LOG_LEVEL: "warn"
-          HOMEPAGE_FILE_WATCHER: "false"
-        
-        # Probes
-        probes:
-          liveness:
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /api/ping
-                port: 3000
-              initialDelaySeconds: 10
-              periodSeconds: 30
-          readiness:
-            enabled: true
-            custom: true
-            spec:
-              httpGet:
-                path: /api/ping
-                port: 3000
-              initialDelaySeconds: 5
-              periodSeconds: 10
-        
-        # Resource limits
-        resources:
-          requests:
-            memory: 128Mi
-            cpu: 50m
-          limits:
-            memory: 512Mi
-            cpu: 200m
+extraClusterRoles:
+  # - apiGroups:
+  #   - some-group
+  #   resources:
+  #   - some-resource
+  #   verbs:
+  #   - get
 
-# Service configuration
+serviceAccount:
+  # Specify a different service account name. When blank it will default to the release
+  # name if *create* is enabled, otherwise it will refer to the default service account.
+  name: ""
+  # Create service account. Needed when RBAC is enabled.
+  create: false
+
 service:
   main:
     ports:
       http:
         port: 3000
-        protocol: HTTP
 
-# Ingress configuration
+controller:
+  strategy: RollingUpdate
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 25%
+
+# Enable the ingress to expose Homepage to the network.
 ingress:
   main:
-    enabled: true
-    className: nginx
-    annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /
-    hosts:
-      - host: home.homelab
-        paths:
-          - path: /
-            pathType: Prefix
-            service:
-              name: main
-              port: http
-    # TLS disabled for now to avoid cert-manager issues
+    enabled: false
+    # labels:
+    #   # This label will enable discover of this deployment in Homepage
+    #   gethomepage.dev/enabled: "true"
+    # annotations:
+    #   # These annotations will configure how this deployment is shown in Homepage
+    #   gethomepage.dev/name: "Homepage"
+    #   gethomepage.dev/description: "A modern, secure, highly customizable application dashboard."
+    #   gethomepage.dev/group: "A New Group"
+    #   gethomepage.dev/icon: "homepage.png"
+    # ingressClassName: "nginx"
+    # hosts:
+    #   - host: &host "homepage.local"
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
     # tls:
     #   - hosts:
-    #       - home.homelab
-    #     secretName: homepage-tls
+    #       - *host
 
-# ServiceAccount and RBAC
-serviceAccount:
-  create: true
-  autoMount: true
+# All the config files for Homepage can be specified under their relevant config block.
+config:
+  # To use an existing ConfigMap uncomment this line and specify the name
+  # useExistingConfigMap: existing-homepage-configmap
+  bookmarks:
+    - Developer:
+        - Github:
+            - abbr: GH
+              href: https://github.com/
 
-# Create ConfigMaps for Homepage configuration
-configMaps:
-  homepage-config:
-    enabled: true
-    data:
-      settings.yaml: |
-        title: "K3s Homelab"
-        theme: dark
-        color: blue
-        headerStyle: boxed
-        language: en
-        hideErrors: true
-        hideVersion: true
-        target: _self
-        layout:
-          Smart Home:
-            icon: home
-            columns: 2
-          Kubernetes:
-            icon: kubernetes
-            columns: 3
-          Monitoring:
-            icon: grafana
-            columns: 2
-      
-      services.yaml: |
-        - Smart Home:
-            - Home Assistant:
-                href: http://homeassistant.homelab
-                description: "Home automation hub"
-                icon: home-assistant.png
-        
-            - OctoPrint:
-                href: http://octoprint.homelab
-                description: "3D Printer Control"
-                icon: octoprint.png
+  services:
+    - My First Group:
+        - My First Service:
+            href: http://localhost/
+            description: Homepage is awesome
 
-            - Nanoleaf Tree:
-                href: http://wled-tree.homelab
-                description: "WLED Nanoleaf Tree"
-                icon: wled.png
+    - My Second Group:
+        - My Second Service:
+            href: http://localhost/
+            description: Homepage is the best
 
-        - Kubernetes Infrastructure:
-            - ArgoCD:
-                href: http://192.168.4.10:30080
-                description: "GitOps CD for Kubernetes"
-                icon: argocd.png
-                ping: 192.168.4.10
+    - My Third Group:
+        - My Third Service:
+            href: http://localhost/
+            description: Homepage is 😎
+  widgets:
+    - resources:
+        # change backend to 'kubernetes' to use Kubernetes integration. Requires RBAC.
+        backend: resources
+        expanded: true
+        cpu: true
+        memory: true
+    - search:
+        provider: duckduckgo
+        target: _blank
+    ## Uncomment to enable Kubernetes integration
+    # - kubernetes:
+    #     cluster:
+    #       show: true
+    #       cpu: true
+    #       memory: true
+    #       showLabel: true
+    #       label: "cluster"
+    #     nodes:
+    #       show: true
+    #       cpu: true
+    #       memory: true
+    #       showLabel: true
+  kubernetes:
+    # change mode to 'cluster' to use RBAC service account
+    mode: disable
+    # Uncomment to enable gateway api HttpRoute discovery.
+    #gateway: true
+  docker:
+  settings:
 
-            - Longhorn:
-                href: http://longhorn.homelab
-                description: "Cloud native storage"
-                icon: longhorn.png
+  # all sections can alternately be appended with "String" such as this example settings. This is useful
+  # for defining a stable ordering. Unfortunately Go's (and therefore Helm's) toYaml function sorts keys
+  # and loses and input ordering. Using a string is the best way around this.
+  settingsString: |
+    title: Homepage
+    headerStyle: boxed
+    layout:
+      My First Group:
+      My Second Group:
+      My Third Group:
 
-            - Cert Manager:
-                href: https://cert-manager.io/docs/
-                description: "Certificate management"
-                icon: cert-manager.png
-                
-            - MetalLB:
-                href: https://metallb.io/
-                description: "Load balancer for bare metal"
-                icon: metallb.png
+# -- Main environment variables. Template enabled.
+# Syntax options:
+# A) TZ: UTC
+# B) PASSWD: '{{ .Release.Name }}'
+# C) PASSWD:
+#      configMapKeyRef:
+#        name: config-map-name
+#        key: key-name
+# D) PASSWD:
+#      valueFrom:
+#        secretKeyRef:
+#          name: secret-name
+#          key: key-name
+#      ...
+# E) - name: TZ
+#      value: UTC
+# F) - name: TZ
+#      value: '{{ .Release.Name }}'
+env:
+  - name: HOMEPAGE_ALLOWED_HOSTS
+    # This value must be set
+    # ref: https://gethomepage.dev/installation/#homepage_allowed_hosts
+    value: null
 
-        - Monitoring:
-            - Grafana:
-                href: http://grafana.homelab
-                description: "Metrics visualization"
-                icon: grafana.png
+# To include environment variables from other configs or other secrets for use in
+# Homepage's variable substitutions. Refer to them here.
+# envFrom:
+#   - secretRef:
+#       name: my-secret
+#   - configMapRef:
+#       name: my-configmap
 
-            - Prometheus:
-                href: http://prometheus.homelab
-                description: "Metrics collection"
-                icon: prometheus.png
-
-            - Alert Manager:
-                href: http://alertmanager.homelab
-                description: "Alert management"
-                icon: prometheus.png
-
-            - Loki:
-                href: http://loki.homelab
-                description: "Log aggregation"
-                icon: loki.png
-      
-      widgets.yaml: |
-        - resources:
-            backend: resources
-            expanded: false
-            cpu: true
-            memory: true
-            refresh: 5000
-        - search:
-            provider: duckduckgo
-            target: _blank
-        - datetime:
-            format:
-              timeStyle: short
-              dateStyle: short
-            locale: en-US
-      
-      bookmarks.yaml: |
-        - Development:
-            - GitHub:
-                - abbr: GH
-                  href: https://github.com/
-            - Kubernetes Docs:
-                - abbr: K8S
-                  href: https://kubernetes.io/docs/home/
-            - ArgoCD Docs:
-                - abbr: ARGO
-                  href: https://argo-cd.readthedocs.io/
-        - Tools:
-            - ChatGPT:
-                - abbr: GPT
-                  href: https://chat.openai.com/
-            - Weather:
-                - abbr: WX
-                  href: https://weather.gov/
-      
-      kubernetes.yaml: |
-        mode: cluster
-        resources:
-          - ingresses
-          - nodes
-          - pods
-          - services
-        namespace_selector: "homepage,longhorn-system,monitoring,argocd"
-      
-      custom.css: |
-        /* Performance optimizations */
-        .card {
-          transition: none !important;
-        }
-        * {
-          animation-duration: 0.1s !important;
-          transition-duration: 0.1s !important;
-        }
-      
-      docker.yaml: ""
-      custom.js: ""
-
-# Persistence configuration
 persistence:
-  config:
-    enabled: true
-    type: configMap
-    name: homepage-config
-    globalMounts:
-      - path: /app/config/settings.yaml
-        subPath: settings.yaml
-      - path: /app/config/services.yaml
-        subPath: services.yaml
-      - path: /app/config/widgets.yaml
-        subPath: widgets.yaml
-      - path: /app/config/bookmarks.yaml
-        subPath: bookmarks.yaml
-      - path: /app/config/kubernetes.yaml
-        subPath: kubernetes.yaml
-      - path: /app/config/docker.yaml
-        subPath: docker.yaml
-      - path: /app/config/custom.css
-        subPath: custom.css
-      - path: /app/config/custom.js
-        subPath: custom.js
-  
   logs:
     enabled: true
     type: emptyDir
-    globalMounts:
-      - path: /app/config/logs
+    mountPath: /app/config/logs
 
-# RBAC for Kubernetes integration
-rbac:
-  create: true
-  rules:
-    - apiGroups: [""]
-      resources: ["namespaces", "nodes", "pods", "services"]
-      verbs: ["get", "list"]
-    - apiGroups: ["metrics.k8s.io"]
-      resources: ["nodes", "pods"]
-      verbs: ["get", "list"]
-    - apiGroups: ["apps"]
-      resources: ["deployments", "statefulsets", "daemonsets"]
-      verbs: ["get", "list"]
-    - apiGroups: ["networking.k8s.io"]
-      resources: ["ingresses"]
-      verbs: ["get", "list"]
+# resources:
+#   requests:
+#     memory: 10Mi
+#     cpu: 10m
+#   limits:
+#     memory: 200Mi
+#     cpu: 500m

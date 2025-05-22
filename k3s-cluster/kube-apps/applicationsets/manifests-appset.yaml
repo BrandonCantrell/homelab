@@ -17,9 +17,9 @@ spec:
       - name: cert-manager-config
         namespace: cert-manager
         path: k3s-cluster/kube-apps/manifests/cert-manager-config
-      # - name: homepage-direct
-      #   namespace: homepage
-      #   path: k3s-cluster/kube-apps/manifests/homepage
+      - name: homepage-config
+        namespace: homepage
+        path: k3s-cluster/kube-apps/manifests/homepage
   template:
     metadata:
       name: '{{name}}'

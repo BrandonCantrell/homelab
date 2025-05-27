@@ -14,21 +14,29 @@ alertmanager:
           - path: /
             pathType: Prefix
 
-
 server:
-  retention: 7d      
-  retentionSize: 8GB
+  # CRITICAL: Reduce retention to prevent disk full (60% of 10Gi = 6GB max)
+  retention: 5d      # Reduced from 7d to prevent issues
+  retentionSize: 6GB # Reduced from 8GB to stay within 60% disk usage
   
-  # Global scrape configuration
+  # Global scrape configuration - optimized for lower storage usage
   global:
-    scrape_interval: 30s 
+    scrape_interval: 60s    # Increased from 30s to reduce data volume
     scrape_timeout: 10s
-    evaluation_interval: 30s
+    evaluation_interval: 60s # Increased from 30s
+  
+  # CRITICAL FIXES for compaction and reload issues
+  extraFlags:
+    - web.enable-lifecycle                    # Enables config reload endpoint
+    - storage.tsdb.wal-compression           # Reduces WAL size by ~50%
+    - storage.tsdb.min-block-duration=2h     # Ensures proper compaction timing
+    - storage.tsdb.max-block-duration=24h    # Prevents oversized blocks
   
   persistentVolume:
     enabled: true
     storageClassName: longhorn
     size: 10Gi
+    
   ingress:
     enabled: true
     ingressClassName: nginx
@@ -36,13 +44,15 @@ server:
       - prometheus.homelab     
     path: /
     pathType: Prefix
+    
+  # Increased resources for better compaction performance
   resources:
     requests:
       cpu: 200m
       memory: 512Mi
     limits:
-      cpu: 500m
-      memory: 1Gi
+      cpu: 1000m      # Increased from 500m for better compaction
+      memory: 2Gi     # Increased from 1Gi for stable operation
 
 pushgateway:
   enabled: true
@@ -57,9 +67,10 @@ serviceMonitorSelectorNilUsesHelmValues: false
 serviceMonitorSelector: {}
 serviceMonitorNamespaceSelector: {}
 
+# Optimized scrape configs to reduce data volume
 additionalScrapeConfigs:
   - job_name: 'kubernetes-nodes-cadvisor'
-    scrape_interval: 60s  
+    scrape_interval: 120s   # Reduced frequency for cadvisor (was 60s)
     scrape_timeout: 10s
     scheme: https
     tls_config:
@@ -77,3 +88,11 @@ additionalScrapeConfigs:
         regex: (.+)
         target_label: __metrics_path__
         replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+    # Drop high-cardinality metrics to reduce storage
+    metric_relabel_configs:
+      - source_labels: [__name__]
+        regex: 'container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_network_receive_bytes_total|container_network_transmit_bytes_total|container_fs_usage_bytes|container_fs_reads_bytes_total|container_fs_writes_bytes_total'
+        action: keep
+      - source_labels: [container]
+        regex: '^$'
+        action: drop

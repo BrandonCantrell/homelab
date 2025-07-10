@@ -20,6 +20,9 @@ spec:
       - name: homepage-config
         namespace: homepage
         path: k3s-cluster/kube-apps/manifests/homepage
+      - name: homebridge
+        namespace: homebridge
+        path: k3s-cluster/kube-apps/manifests/homebridge
   template:
     metadata:
       name: '{{name}}'
@@ -28,7 +31,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/BrandonCantrell/homelab.git
-        targetRevision: develop
+        targetRevision: homebridge
         path: '{{path}}'
       destination:
         server: https://kubernetes.default.svc

@@ -29,6 +29,8 @@ data:
             href: http://longhorn.homelab
             description: Distributed storage
             icon: longhorn.png
+            
+    - Monitoring:
         - Grafana:
             href: http://grafana.homelab
             description: Metrics visualization
@@ -37,19 +39,38 @@ data:
             href: http://prometheus.homelab
             description: Metrics collection
             icon: prometheus.png
+            
+    - Home Apps:
+        - WLED Nanoleaf Tree:
+            href: http://wled-tree.homelab
+            description: Nanoleaf Tree
+            icon: wled.png
+        - Home Assistant:
+            href: https://homeassistant.homelab
+            description: Home Assistant
+            icon: home-assistant.png
+        - Octoprint:
+            href: https://octoprint.homelab
+            description: Octoprint
+            icon: octoprint.png
 
   widgets.yaml: |
     - resources:
-        backend: kubernetes
-        expanded: true
+        backend: resources
+        expanded: false
         cpu: true
         memory: true
     - search:
         provider: duckduckgo
         target: _blank
+    - datetime:
+        text_size: xl
+        format:
+          timeStyle: short
+          dateStyle: short
 
-
-  kubernetes.yaml: ""
+  kubernetes.yaml: |
+    mode: disable
 
   docker.yaml: ""
 
@@ -58,7 +79,40 @@ data:
     headerStyle: boxed
     theme: dark
     color: blue
+    target: _self
+    
+    # Background image configuration
+    background: https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=2560&q=80
+    backgroundOpacity: 15
+    backgroundFilter: 
+      blur: 0
+      saturation: 100
+      brightness: 100
+    
+    # Layout configuration for clean columns
     layout:
       Infrastructure:
-        style: row
-        columns: 4
+        style: column
+        icon: mdi-server-network
+        columns: 2
+      Monitoring: 
+        style: column
+        icon: mdi-chart-line
+        columns: 2
+      Home Apps:
+        style: column
+        icon: mdi-home-automation
+        columns: 3
+        
+    # Performance optimizations
+    hideErrors: true
+    hideVersion: false
+    fiveColumns: false
+    statusStyle: "dot"
+    
+    # Quick launch settings
+    quicklaunch:
+      searchDescriptions: false
+      hideInternetSearch: false
+      hideVisitURL: false
+      provider: duckduckgo

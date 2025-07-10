@@ -53,6 +53,10 @@ data:
             href: https://octoprint.homelab
             description: Octoprint
             icon: octoprint.png
+        - Homebridge:
+            href: http://homebridge.homelab
+            description: HomeKit bridge
+            icon: homebridge.png
 
   widgets.yaml: |
     - resources:

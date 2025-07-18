@@ -22,7 +22,7 @@ spec:
         app: homepage
       annotations:
         # Force pod restart when ConfigMap changes - update this hash when you change the ConfigMap
-        configmap/hash: "homepage-config-v3"
+        configmap/hash: "homepage-config-v4"
     spec:
       serviceAccountName: homepage
       securityContext:
@@ -51,7 +51,7 @@ spec:
           value: "K3s Homelab Dashboard"
         # Required for v1.0.0+ security
         - name: HOMEPAGE_ALLOWED_HOSTS
-          value: "home.opsguy.io,localhost,127.0.0.1"
+          value: "home.opsguy.io,localhost,127.0.0.1,10.42.0.0/16"
         # Performance optimizations
         - name: HOMEPAGE_FILE_WATCHER
           value: "false"

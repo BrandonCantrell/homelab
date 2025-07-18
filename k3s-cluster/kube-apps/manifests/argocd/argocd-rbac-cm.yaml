@@ -44,8 +44,17 @@ data:
     p, brandon, exec, *, *, allow
     p, brandon, settings, *, *, allow
     
-    # Built-in admin gets admin role
-    g, admin, role:admin
+    # Built-in admin gets direct permissions
+    p, admin, applications, *, */*, allow
+    p, admin, clusters, *, *, allow
+    p, admin, repositories, *, *, allow
+    p, admin, certificates, *, *, allow
+    p, admin, projects, *, *, allow
+    p, admin, accounts, *, *, allow
+    p, admin, gpgkeys, *, *, allow
+    p, admin, logs, *, *, allow
+    p, admin, exec, *, *, allow
+    p, admin, settings, *, *, allow
     
     # User assignments  
     g, readonly, role:readonly

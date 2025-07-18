@@ -20,7 +20,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: homebridge
-        image: oznu/homebridge:ubuntu
+        image: homebridge/homebridge:ubuntu
         ports:
         - containerPort: 8581
           name: web-ui

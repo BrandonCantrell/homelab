@@ -4,7 +4,7 @@ metadata:
   name: homepage
   namespace: homepage
   labels:
-    app.kubernetes.io/name: homepage
+    app: homepage
 spec:
   revisionHistoryLimit: 3
   replicas: 1

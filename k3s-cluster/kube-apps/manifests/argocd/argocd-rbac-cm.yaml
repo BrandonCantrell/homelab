@@ -8,8 +8,8 @@ metadata:
     app.kubernetes.io/name: argocd-rbac-cm
     app.kubernetes.io/part-of: argocd
 data:
-  # Default policy - deny all
-  policy.default: role:readonly
+  # Default policy - deny all  
+  policy.default: ""
   
   # Admin role - full access
   policy.csv: |

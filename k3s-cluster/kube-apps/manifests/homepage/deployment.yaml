@@ -18,7 +18,7 @@ spec:
       labels:
         app.kubernetes.io/name: homepage
       annotations:
-        configmap-version: "1"
+        configmap-version: "2" 
     spec:
       serviceAccountName: homepage
       automountServiceAccountToken: true

@@ -32,6 +32,9 @@ data:
     p, role:readonly, projects, get, *, allow
     p, role:readonly, logs, get, *, allow
     
+    # Built-in admin gets admin role
+    g, admin, role:admin
+    
     # User assignments  
     g, brandon, role:admin
     g, readonly, role:readonly

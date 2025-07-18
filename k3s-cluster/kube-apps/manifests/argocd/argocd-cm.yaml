@@ -11,6 +11,9 @@ data:
   # Server configuration
   url: "https://argo.opsguy.io"
   
+  # Built-in admin gets account management
+  admin.enabled: "true"
+  
   # Local users
   accounts.brandon: "apiKey, login"
   accounts.readonly: "login"

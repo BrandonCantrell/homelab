@@ -22,7 +22,7 @@ data:
   services.yaml: |
     - Infrastructure:
         - ArgoCD:
-            href: http://192.168.4.10:30080
+            href: https://argo.opsguy.io
             description: GitOps CD for Kubernetes
             icon: argocd.png
         - Longhorn:

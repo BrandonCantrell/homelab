@@ -32,9 +32,20 @@ data:
     p, role:readonly, projects, get, *, allow
     p, role:readonly, logs, get, *, allow
     
+    # Direct permissions for brandon user
+    p, brandon, applications, *, */*, allow
+    p, brandon, clusters, *, *, allow
+    p, brandon, repositories, *, *, allow
+    p, brandon, certificates, *, *, allow
+    p, brandon, projects, *, *, allow
+    p, brandon, accounts, *, *, allow
+    p, brandon, gpgkeys, *, *, allow
+    p, brandon, logs, *, *, allow
+    p, brandon, exec, *, *, allow
+    p, brandon, settings, *, *, allow
+    
     # Built-in admin gets admin role
     g, admin, role:admin
     
     # User assignments  
-    g, brandon, role:admin
     g, readonly, role:readonly

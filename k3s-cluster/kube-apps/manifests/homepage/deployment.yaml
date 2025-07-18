@@ -22,7 +22,7 @@ spec:
         app: homepage
       annotations:
         # Force pod restart when ConfigMap changes - update this hash when you change the ConfigMap
-        configmap/hash: "homepage-config-v1"
+        configmap/hash: "homepage-config-v2"
     spec:
       serviceAccountName: homepage
       securityContext:
@@ -40,7 +40,7 @@ spec:
           protocol: TCP
         env:
         - name: HOMEPAGE_CONFIG_DIR
-          value: /config
+          value: /app/config
         - name: HOMEPAGE_CACHE_DIR
           value: /cache
         - name: HOMEPAGE_LOGS_DIR
@@ -59,7 +59,7 @@ spec:
           value: "false"
         volumeMounts:
         - name: config
-          mountPath: /config
+          mountPath: /app/config
           readOnly: true
         - name: cache
           mountPath: /cache
@@ -90,7 +90,7 @@ spec:
             cpu: 200m
         securityContext:
           allowPrivilegeEscalation: false
-          readOnlyRootFilesystem: true
+          readOnlyRootFilesystem: false
           capabilities:
             drop:
             - ALL

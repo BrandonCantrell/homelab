@@ -12,7 +12,7 @@ data:
   url: "https://argo.opsguy.io"
   
   # Local users
-  accounts.admin: "apiKey, login"
+  accounts.brandon: "apiKey, login"
   accounts.readonly: "login"
   
   # Security settings

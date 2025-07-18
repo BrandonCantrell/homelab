@@ -5,7 +5,7 @@ metadata:
   name: homepage-config
   namespace: homepage
   labels:
-    app.kubernetes.io/name: homepage
+    app: homepage
 data:
   bookmarks.yaml: |
     - Developer:
@@ -39,6 +39,10 @@ data:
             href: https://prometheus.opsguy.io
             description: Metrics collection
             icon: prometheus.png
+        - Alertmanager:
+            href: https://alertmanager.opsguy.io
+            description: Alert management
+            icon: alertmanager.png
             
     - Home Apps:
         - WLED Nanoleaf Tree:
@@ -51,7 +55,7 @@ data:
             icon: home-assistant.png
         - Octoprint:
             href: https://octoprint.opsguy.io
-            description: Octoprint
+            description: 3D printer management
             icon: octoprint.png
         - Homebridge:
             href: https://homebridge.opsguy.io
@@ -72,11 +76,34 @@ data:
         format:
           timeStyle: short
           dateStyle: short
+    - kubernetes:
+        cluster:
+          # Shows cluster-wide statistics
+          show: true
+          # Shows the aggregate CPU stats
+          cpu: true
+          # Shows the aggregate memory stats
+          memory: true
+          # Shows a custom label
+          showLabel: true
+          label: "cluster"
+        nodes:
+          # Shows node-specific statistics
+          show: true
+          # Shows the CPU for each node
+          cpu: true
+          # Shows the memory for each node
+          memory: true
+          # Shows the label, which is always the node name
+          showLabel: true
 
   kubernetes.yaml: |
-    mode: disable
+    mode: cluster
+    # Enable expanded view for better cluster info display
+    showStats: true
 
-  docker.yaml: ""
+  docker.yaml: |
+    # Docker integration disabled
 
   settings.yaml: |
     title: K3s Homelab Dashboard
@@ -102,7 +129,7 @@ data:
       Monitoring: 
         style: column
         icon: mdi-chart-line
-        columns: 2
+        columns: 3
       Home Apps:
         style: column
         icon: mdi-home-automation

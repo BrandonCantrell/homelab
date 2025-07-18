@@ -9,10 +9,14 @@ alertmanager:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - host: alertmanager.homelab
+      - host: alertmanager.opsguy.io
         paths:
           - path: /
             pathType: Prefix
+    tls:
+      - hosts:
+        - alertmanager.opsguy.io
+        secretName: wildcard-opsguy-io-tls
 
 server:
   # CRITICAL: Reduce retention to prevent disk full (60% of 10Gi = 6GB max)
@@ -41,9 +45,13 @@ server:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - prometheus.homelab     
+      - prometheus.opsguy.io     
     path: /
     pathType: Prefix
+    tls:
+      - hosts:
+        - prometheus.opsguy.io
+        secretName: wildcard-opsguy-io-tls
     
   # Increased resources for better compaction performance
   resources:

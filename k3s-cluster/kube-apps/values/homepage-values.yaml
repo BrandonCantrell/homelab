@@ -10,15 +10,19 @@ ingress:
     enabled: true
     ingressClassName: nginx
     hosts:
-      - host: home.homelab
+      - host: home.opsguy.io
         paths:
           - path: /
             pathType: Prefix
+    tls:
+      - hosts:
+        - home.opsguy.io
+        secretName: wildcard-opsguy-io-tls
 
 # Environment variable for allowed hosts
 env:
   - name: HOMEPAGE_ALLOWED_HOSTS
-    value: "home.homelab,localhost"
+    value: "home.opsguy.io,localhost"
 
 # Disable RBAC (override the default)
 enableRbac: false

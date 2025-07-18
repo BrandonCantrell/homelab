@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: homebridge.homelab
+  - host: homebridge.opsguy.io
     http:
       paths:
       - path: /
@@ -21,3 +21,7 @@ spec:
             name: homebridge
             port:
               number: 8581
+  tls:
+  - hosts:
+    - homebridge.opsguy.io
+    secretName: wildcard-opsguy-io-tls

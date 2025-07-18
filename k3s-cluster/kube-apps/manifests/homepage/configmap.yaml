@@ -61,10 +61,6 @@ data:
             href: https://homebridge.opsguy.io
             description: HomeKit bridge
             icon: homebridge.png
-        - Stash:
-            href: https://stash.opsguy.io
-            description: Media library
-            icon: stash.png
 
   widgets.yaml: |
     - resources:

@@ -5,7 +5,7 @@ metadata:
   name: homepage-config
   namespace: homepage
   labels:
-    app.kubernetes.io/name: homepage
+    app: homepage
 data:
   bookmarks.yaml: |
     - Developer:
@@ -39,6 +39,10 @@ data:
             href: https://prometheus.opsguy.io
             description: Metrics collection
             icon: prometheus.png
+        - Alertmanager:
+            href: https://alertmanager.opsguy.io
+            description: Alert management
+            icon: alertmanager.png
             
     - Home Apps:
         - WLED Nanoleaf Tree:
@@ -51,12 +55,16 @@ data:
             icon: home-assistant.png
         - Octoprint:
             href: https://octoprint.opsguy.io
-            description: Octoprint
+            description: 3D printer management
             icon: octoprint.png
         - Homebridge:
             href: https://homebridge.opsguy.io
             description: HomeKit bridge
             icon: homebridge.png
+        - Stash:
+            href: https://stash.opsguy.io
+            description: Media library
+            icon: stash.png
 
   widgets.yaml: |
     - resources:
@@ -74,9 +82,12 @@ data:
           dateStyle: short
 
   kubernetes.yaml: |
-    mode: disable
+    mode: cluster
+    # Enable expanded view for better cluster info display
+    showStats: true
 
-  docker.yaml: ""
+  docker.yaml: |
+    # Docker integration disabled
 
   settings.yaml: |
     title: K3s Homelab Dashboard
@@ -102,7 +113,7 @@ data:
       Monitoring: 
         style: column
         icon: mdi-chart-line
-        columns: 2
+        columns: 3
       Home Apps:
         style: column
         icon: mdi-home-automation

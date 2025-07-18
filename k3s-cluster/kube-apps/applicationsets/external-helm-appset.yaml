@@ -36,10 +36,6 @@ spec:
         namespace: metallb-system
         path: k3s-cluster/kube-apps/charts/metallb
         valuesPath: ../../values/metallb-values.yaml
-      - name: homepage
-        namespace: homepage
-        path: k3s-cluster/kube-apps/charts/homepage
-        valuesPath: ../../values/homepage-values.yaml
       - name: homeassistant
         namespace: homeassistant
         path: k3s-cluster/kube-apps/charts/home-assistant

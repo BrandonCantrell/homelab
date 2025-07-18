@@ -15,7 +15,7 @@ data:
   admin.enabled: "true"
   
   # Local users
-  accounts.brandon: "apiKey, login"
+  accounts.brandon: "apiKey, login, admin"
   accounts.readonly: "login"
   
   # Security settings

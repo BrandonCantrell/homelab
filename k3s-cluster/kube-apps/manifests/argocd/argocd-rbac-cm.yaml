@@ -22,6 +22,7 @@ data:
     p, role:admin, gpgkeys, *, *, allow
     p, role:admin, logs, *, *, allow
     p, role:admin, exec, *, *, allow
+    p, role:admin, settings, *, *, allow
     
     # Readonly role - view only
     p, role:readonly, applications, get, */*, allow

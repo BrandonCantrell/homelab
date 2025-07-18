@@ -60,7 +60,11 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
   hosts:
-    - host: homeassistant.homelab
+    - host: homeassistant.opsguy.io
       paths:
         - path: /
           pathType: ImplementationSpecific
+  tls:
+    - hosts:
+      - homeassistant.opsguy.io
+      secretName: wildcard-opsguy-io-tls

@@ -2,14 +2,14 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: wildcard-homelab
+  name: wildcard-opsguy-io
   namespace: cert-manager
 spec:
-  secretName: wildcard-homelab-tls
+  secretName: wildcard-opsguy-io-tls
   issuerRef:
-    name: selfsigned-issuer
+    name: letsencrypt-prod
     kind: ClusterIssuer
-  commonName: "*.homelab"
+  commonName: "*.opsguy.io"
   dnsNames:
-  - "*.homelab"
-  - "homelab"
+  - "*.opsguy.io"
+  - "opsguy.io"

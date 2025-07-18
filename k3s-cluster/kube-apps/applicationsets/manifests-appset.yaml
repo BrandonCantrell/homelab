@@ -21,7 +21,7 @@ spec:
         namespace: homepage
         path: k3s-cluster/kube-apps/manifests/homepage
       - name: homebridge
-        namespace: homebridge
+        pace: homebridge
         path: k3s-cluster/kube-apps/manifests/homebridge
   template:
     metadata:
@@ -31,7 +31,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/BrandonCantrell/homelab.git
-        targetRevision: homebridge
+        targetRevision: develop
         path: '{{path}}'
       destination:
         server: https://kubernetes.default.svc

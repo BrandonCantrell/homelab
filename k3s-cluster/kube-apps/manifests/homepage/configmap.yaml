@@ -26,35 +26,35 @@ data:
             description: GitOps CD for Kubernetes
             icon: argocd.png
         - Longhorn:
-            href: http://longhorn.homelab
+            href: https://longhorn.opsguy.io
             description: Distributed storage
             icon: longhorn.png
             
     - Monitoring:
         - Grafana:
-            href: http://grafana.homelab
+            href: https://grafana.opsguy.io
             description: Metrics visualization
             icon: grafana.png
         - Prometheus:
-            href: http://prometheus.homelab
+            href: https://prometheus.opsguy.io
             description: Metrics collection
             icon: prometheus.png
             
     - Home Apps:
         - WLED Nanoleaf Tree:
-            href: http://wled-tree.homelab
+            href: http://wled-tree.opsguy.io
             description: Nanoleaf Tree
             icon: wled.png
         - Home Assistant:
-            href: https://homeassistant.homelab
+            href: https://homeassistant.opsguy.io
             description: Home Assistant
             icon: home-assistant.png
         - Octoprint:
-            href: https://octoprint.homelab
+            href: https://octoprint.opsguy.io
             description: Octoprint
             icon: octoprint.png
         - Homebridge:
-            href: http://homebridge.homelab
+            href: https://homebridge.opsguy.io
             description: HomeKit bridge
             icon: homebridge.png
 

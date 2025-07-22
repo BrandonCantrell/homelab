@@ -42,7 +42,7 @@ data:
     retain_available true
     
     # Message size limits
-    message_size_limit 268435456
+    max_packet_size 268435456
     
     # Connection settings  
     keepalive_interval 60

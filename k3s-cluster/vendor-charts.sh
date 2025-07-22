@@ -10,7 +10,6 @@ CHARTS=(
   "ingress-nginx https://kubernetes.github.io/ingress-nginx 4.12.1"
   "longhorn https://charts.longhorn.io 1.8.1"
   "metallb https://metallb.github.io/metallb 0.14.6"
-  "homepage https://jameswynn.github.io/helm-charts 2.1.0"
   "home-assistant http://pajikos.github.io/home-assistant-helm-chart 0.2.117"
   "cert-manager https://charts.jetstack.io 1.13.2 "
   "loki-stack https://grafana.github.io/helm-charts 2.9.10"

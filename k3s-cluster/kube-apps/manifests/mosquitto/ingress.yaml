@@ -1,0 +1,31 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mosquitto-websocket
+  namespace: mosquitto
+  labels:
+    app.kubernetes.io/name: mosquitto
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: "mosquitto"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - mqtt.opsguy.io
+    secretName: opsguy-io-tls
+  rules:
+  - host: mqtt.opsguy.io
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: mosquitto
+            port:
+              number: 9001

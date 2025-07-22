@@ -8,17 +8,13 @@ metadata:
     app.kubernetes.io/name: mosquitto
 data:
   mosquitto.conf: |
-    # Mosquitto MQTT Broker Configuration
-    
-    # Basic settings
-    user mosquitto
-    
     # Listeners
     listener 1883
-    protocol mqtt
+    allow_anonymous true
     
     listener 9001
     protocol websockets
+    allow_anonymous true
     
     # Persistence
     persistence true
@@ -26,24 +22,3 @@ data:
     
     # Logging
     log_dest stdout
-    log_type error
-    log_type warning
-    log_type notice
-    log_type information
-    log_timestamp true
-    
-    # Security - allow anonymous for now (can be configured later)
-    allow_anonymous true
-    
-    # Maximum connections
-    max_connections -1
-    
-    # Retain messages
-    retain_available true
-    
-    # Message size limits
-    max_packet_size 268435456
-    
-    # Connection settings  
-    keepalive_interval 60
-    max_keepalive 65535

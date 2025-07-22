@@ -29,10 +29,11 @@ spec:
         - name: websocket
           containerPort: 9001
           protocol: TCP
+        command: ["mosquitto"]
+        args: ["-c", "/mosquitto/config/mosquitto.conf"]
         volumeMounts:
         - name: config
-          mountPath: /mosquitto/config/mosquitto.conf
-          subPath: mosquitto.conf
+          mountPath: /mosquitto/config/
         - name: data
           mountPath: /mosquitto/data
         resources:

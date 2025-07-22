@@ -17,7 +17,7 @@ spec:
   tls:
   - hosts:
     - mqtt.opsguy.io
-    secretName: opsguy-io-tls
+    secretName: wildcard-opsguy-io-tls
   rules:
   - host: mqtt.opsguy.io
     http:

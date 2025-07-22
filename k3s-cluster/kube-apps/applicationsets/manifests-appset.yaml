@@ -21,8 +21,11 @@ spec:
         namespace: homepage
         path: k3s-cluster/kube-apps/manifests/homepage
       - name: homebridge
-        pace: homebridge
+        namespace: homebridge
         path: k3s-cluster/kube-apps/manifests/homebridge
+      - name: mosquitto
+        namespace: mosquitto
+        path: k3s-cluster/kube-apps/manifests/mosquitto
   template:
     metadata:
       name: '{{name}}'

@@ -34,7 +34,7 @@ configuration:
 
     # MQTT Configuration
     mqtt:
-      broker: mosquitto.mosquitto.svc.cluster.local
+      broker: 192.168.4.21
       port: 1883
       # No username/password needed since anonymous access is enabled
 

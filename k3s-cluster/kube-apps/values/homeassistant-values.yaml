@@ -32,11 +32,7 @@ configuration:
         - 127.0.0.1
         - 10.43.0.0/16
 
-    # MQTT Configuration
-    mqtt:
-      broker: 192.168.4.21
-      port: 1883
-      # No username/password needed since anonymous access is enabled
+# MQTT broker configuration must be done via UI in modern Home Assistant
 
     frontend:
       themes: !include_dir_merge_named themes

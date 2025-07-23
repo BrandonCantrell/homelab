@@ -88,10 +88,10 @@ dashboards:
       revision: 1
       datasource: Prometheus
     
-    # ArgoCD monitoring
+    # ArgoCD monitoring - uses different metrics
     argocd-dashboard:
-      gnetId: 19993
-      revision: 2
+      gnetId: 14584
+      revision: 1
       datasource: Prometheus
     
     # Loki logs dashboard
@@ -100,10 +100,16 @@ dashboards:
       revision: 2
       datasource: Loki
     
-    # AlertManager dashboard
+    # AlertManager dashboard - simpler one
     alertmanager:
       gnetId: 9578
       revision: 4
+      datasource: Prometheus
+      
+    # Container overview with better naming
+    container-overview:
+      gnetId: 11600
+      revision: 1
       datasource: Prometheus
 
 resources:

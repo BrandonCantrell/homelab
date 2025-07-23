@@ -8,6 +8,8 @@ metadata:
     app: homebridge
 spec:
   replicas: 1
+  strategy:
+    type: Recreate  # Prevents multi-attach errors with RWO volumes
   selector:
     matchLabels:
       app: homebridge

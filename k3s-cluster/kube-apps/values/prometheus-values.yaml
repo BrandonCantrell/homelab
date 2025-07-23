@@ -208,6 +208,23 @@ serverFiles:
 
 # Enhanced scrape configs for comprehensive monitoring
 additionalScrapeConfigs:
+  # Node Exporter metrics with proper job name for dashboard compatibility
+  - job_name: 'node-exporter'
+    scrape_interval: 60s
+    kubernetes_sd_configs:
+      - role: endpoints
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_service_name]
+        regex: prometheus-prometheus-node-exporter
+        action: keep
+      - source_labels: [__meta_kubernetes_namespace]
+        regex: monitoring
+        action: keep
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+      - source_labels: [__meta_kubernetes_node_name]
+        target_label: instance
+        
   - job_name: 'kubernetes-nodes-cadvisor'
     scrape_interval: 120s   # Reduced frequency for cadvisor (was 60s)
     scrape_timeout: 10s

@@ -5,7 +5,7 @@ metadata:
   name: homepage-config
   namespace: homepage
   labels:
-    app.kubernetes.io/name: homepage
+    app: homepage
 data:
   bookmarks.yaml: |
     - Developer:
@@ -22,37 +22,45 @@ data:
   services.yaml: |
     - Infrastructure:
         - ArgoCD:
-            href: http://192.168.4.10:30080
+            href: https://argo.opsguy.io
             description: GitOps CD for Kubernetes
             icon: argocd.png
         - Longhorn:
-            href: http://longhorn.homelab
+            href: https://longhorn.opsguy.io
             description: Distributed storage
             icon: longhorn.png
             
     - Monitoring:
         - Grafana:
-            href: http://grafana.homelab
+            href: https://grafana.opsguy.io
             description: Metrics visualization
             icon: grafana.png
         - Prometheus:
-            href: http://prometheus.homelab
+            href: https://prometheus.opsguy.io
             description: Metrics collection
             icon: prometheus.png
+        - Alertmanager:
+            href: https://alertmanager.opsguy.io
+            description: Alert management
+            icon: alertmanager.png
             
     - Home Apps:
         - WLED Nanoleaf Tree:
-            href: http://wled-tree.homelab
+            href: http://wled-tree.opsguy.io
             description: Nanoleaf Tree
             icon: wled.png
         - Home Assistant:
-            href: https://homeassistant.homelab
+            href: https://homeassistant.opsguy.io
             description: Home Assistant
             icon: home-assistant.png
         - Octoprint:
-            href: https://octoprint.homelab
-            description: Octoprint
+            href: https://octoprint.opsguy.io
+            description: 3D printer management
             icon: octoprint.png
+        - Homebridge:
+            href: https://homebridge.opsguy.io
+            description: HomeKit bridge
+            icon: homebridge.png
 
   widgets.yaml: |
     - resources:
@@ -68,11 +76,34 @@ data:
         format:
           timeStyle: short
           dateStyle: short
+    - kubernetes:
+        cluster:
+          # Shows cluster-wide statistics
+          show: true
+          # Shows the aggregate CPU stats
+          cpu: true
+          # Shows the aggregate memory stats
+          memory: true
+          # Shows a custom label
+          showLabel: true
+          label: "cluster"
+        nodes:
+          # Shows node-specific statistics
+          show: true
+          # Shows the CPU for each node
+          cpu: true
+          # Shows the memory for each node
+          memory: true
+          # Shows the label, which is always the node name
+          showLabel: true
 
   kubernetes.yaml: |
-    mode: disable
+    mode: cluster
+    # Enable expanded view for better cluster info display
+    showStats: true
 
-  docker.yaml: ""
+  docker.yaml: |
+    # Docker integration disabled
 
   settings.yaml: |
     title: K3s Homelab Dashboard
@@ -98,7 +129,7 @@ data:
       Monitoring: 
         style: column
         icon: mdi-chart-line
-        columns: 2
+        columns: 3
       Home Apps:
         style: column
         icon: mdi-home-automation

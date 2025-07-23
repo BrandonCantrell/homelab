@@ -12,7 +12,10 @@ service:
 ingress:
   enabled: true
   className: nginx
-  host: stash.homelab
+  host: stash.opsguy.io
+  tls:
+    enabled: true
+    secretName: wildcard-opsguy-io-tls
 
 persistence:
   enabled: true

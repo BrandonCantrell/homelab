@@ -32,6 +32,8 @@ configuration:
         - 127.0.0.1
         - 10.43.0.0/16
 
+    # MQTT broker configuration must be done via UI in modern Home Assistant
+
     frontend:
       themes: !include_dir_merge_named themes
 
@@ -60,7 +62,11 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
   hosts:
-    - host: homeassistant.homelab
+    - host: homeassistant.opsguy.io
       paths:
         - path: /
           pathType: ImplementationSpecific
+  tls:
+    - hosts:
+      - homeassistant.opsguy.io
+      secretName: wildcard-opsguy-io-tls

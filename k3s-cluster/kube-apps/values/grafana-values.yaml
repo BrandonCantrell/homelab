@@ -12,7 +12,11 @@ ingress:
   enabled: true
   ingressClassName: nginx
   hosts:
-    - grafana.homelab
+    - grafana.opsguy.io
+  tls:
+    - hosts:
+      - grafana.opsguy.io
+      secretName: wildcard-opsguy-io-tls
 
 datasources:
   datasources.yaml:

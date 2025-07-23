@@ -12,11 +12,13 @@ defaultSettings:
 # This is the ingress configuration from the original application
 ingress:
   enabled: true
-  host: longhorn.homelab
+  host: longhorn.opsguy.io
   path: /
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
   ingressClassName: nginx
+  tls: true
+  tlsSecret: wildcard-opsguy-io-tls
 
 # This is the additional ingress configuration from manifests/longhorn/ingress.yaml
 additionalIngress:
@@ -25,7 +27,7 @@ additionalIngress:
   annotations:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     nginx.ingress.kubernetes.io/rewrite-target: /
-  host: home.homelab
+  host: home.opsguy.io
   path: /longhorn
   pathType: Prefix
   serviceName: longhorn-frontend

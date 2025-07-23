@@ -66,10 +66,6 @@ dashboards:
       gnetId: 1860
       revision: 27
       datasource: Prometheus
-    k3s-monitoring:
-      gnetId: 19972
-      revision: 1
-      datasource: Prometheus
     loki-logs:
       gnetId: 13639
       revision: 1

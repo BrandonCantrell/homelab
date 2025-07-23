@@ -17,6 +17,10 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: mosquitto
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "1883"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
       - name: mosquitto

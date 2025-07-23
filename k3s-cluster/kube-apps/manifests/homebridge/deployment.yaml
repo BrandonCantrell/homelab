@@ -15,6 +15,10 @@ spec:
     metadata:
       labels:
         app: homebridge
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8581"
+        prometheus.io/path: "/"
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet

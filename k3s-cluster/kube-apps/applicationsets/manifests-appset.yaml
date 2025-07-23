@@ -26,6 +26,9 @@ spec:
       - name: mosquitto
         namespace: mosquitto
         path: k3s-cluster/kube-apps/manifests/mosquitto
+      - name: monitoring-servicemonitors
+        namespace: monitoring-servicemonitors
+        path: k3s-cluster/kube-apps/manifests/monitoring-servicemonitors
   template:
     metadata:
       name: '{{name}}'
@@ -34,7 +37,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/BrandonCantrell/homelab.git
-        targetRevision: develop
+        targetRevision: helm-refactor
         path: '{{path}}'
       destination:
         server: https://kubernetes.default.svc

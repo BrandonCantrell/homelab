@@ -52,7 +52,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/BrandonCantrell/homelab.git
-        targetRevision: develop
+        targetRevision: helm-refactor
         path: '{{path}}'
         helm:
           releaseName: '{{name}}'

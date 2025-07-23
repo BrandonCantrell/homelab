@@ -17,6 +17,44 @@ alertmanager:
       - hosts:
         - alertmanager.opsguy.io
         secretName: wildcard-opsguy-io-tls
+  
+  # AlertManager configuration
+  config:
+    global:
+      smtp_smarthost: 'localhost:587'
+      smtp_from: 'alertmanager@opsguy.io'
+    
+    route:
+      group_by: ['alertname', 'cluster', 'service']
+      group_wait: 10s
+      group_interval: 10s
+      repeat_interval: 1h
+      receiver: 'web.hook'
+      # Route critical alerts differently
+      routes:
+      - match:
+          severity: critical
+        receiver: 'critical-alerts'
+        repeat_interval: 30m
+    
+    receivers:
+    - name: 'web.hook'
+      webhook_configs:
+      - url: 'http://localhost:5001/'
+        send_resolved: true
+    
+    - name: 'critical-alerts'
+      webhook_configs:
+      - url: 'http://localhost:5001/critical'
+        send_resolved: true
+        title: 'CRITICAL: {{ range .Alerts }}{{ .Annotations.summary }}{{ end }}'
+    
+    inhibit_rules:
+    - source_match:
+        severity: 'critical'
+      target_match:
+        severity: 'warning'
+      equal: ['alertname', 'instance']
 
 server:
   # CRITICAL: Reduce retention to prevent disk full (60% of 10Gi = 6GB max)
@@ -75,7 +113,101 @@ serviceMonitorSelectorNilUsesHelmValues: false
 serviceMonitorSelector: {}
 serviceMonitorNamespaceSelector: {}
 
-# Optimized scrape configs to reduce data volume
+# Alerting rules for homelab monitoring
+serverFiles:
+  alerting_rules.yml:
+    groups:
+    - name: homelab.rules
+      rules:
+      # Disk space alerts
+      - alert: HighDiskUsage
+        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High disk usage on {{ $labels.instance }}"
+          description: "Disk usage is above 80% on {{ $labels.instance }} (current: {{ $value }}%)"
+      
+      - alert: CriticalDiskUsage
+        expr: (1 - (node_filesystem_avail_bytes / node_filesystem_size_bytes)) * 100 > 90
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical disk usage on {{ $labels.instance }}"
+          description: "Disk usage is above 90% on {{ $labels.instance }} (current: {{ $value }}%)"
+      
+      # Memory alerts
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 85% on {{ $labels.instance }} (current: {{ $value }}%)"
+      
+      # Pod restart alerts
+      - alert: PodRestartingTooMuch
+        expr: rate(kube_pod_container_status_restarts_total[1h]) * 3600 > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is restarting too frequently"
+          description: "Pod {{ $labels.pod }} has restarted {{ $value }} times in the last hour"
+      
+      # Pod not ready
+      - alert: PodNotReady
+        expr: kube_pod_status_ready{condition="false"} == 1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} is not ready"
+          description: "Pod {{ $labels.pod }} has been not ready for more than 10 minutes"
+      
+      # Certificate expiration
+      - alert: CertificateExpiringSoon
+        expr: (cert_manager_certificate_expiration_timestamp_seconds - time()) / 86400 < 30
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Certificate {{ $labels.name }} in namespace {{ $labels.namespace }} expires soon"
+          description: "Certificate will expire in {{ $value }} days"
+      
+      - alert: CertificateExpiringSoon
+        expr: (cert_manager_certificate_expiration_timestamp_seconds - time()) / 86400 < 7
+        for: 1h
+        labels:
+          severity: critical
+        annotations:
+          summary: "Certificate {{ $labels.name }} in namespace {{ $labels.namespace }} expires very soon"
+          description: "Certificate will expire in {{ $value }} days"
+      
+      # Node down
+      - alert: NodeDown
+        expr: up{job="kubernetes-nodes"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Node {{ $labels.instance }} is down"
+          description: "Node {{ $labels.instance }} has been down for more than 5 minutes"
+      
+      # ArgoCD sync failures
+      - alert: ArgoCDSyncFailure
+        expr: argocd_app_info{sync_status!="Synced"} == 1
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "ArgoCD application {{ $labels.name }} sync failed"
+          description: "Application {{ $labels.name }} has been out of sync for more than 15 minutes"
+
+# Enhanced scrape configs for comprehensive monitoring
 additionalScrapeConfigs:
   - job_name: 'kubernetes-nodes-cadvisor'
     scrape_interval: 120s   # Reduced frequency for cadvisor (was 60s)
@@ -104,3 +236,104 @@ additionalScrapeConfigs:
       - source_labels: [container]
         regex: '^$'
         action: drop
+
+  # ArgoCD metrics collection
+  - job_name: 'argocd-metrics'
+    scrape_interval: 30s
+    static_configs:
+    - targets: ['argocd-metrics.argocd.svc.cluster.local:8082']
+    - targets: ['argocd-server-metrics.argocd.svc.cluster.local:8083']
+    - targets: ['argocd-repo-server.argocd.svc.cluster.local:8084']
+    - targets: ['argocd-applicationset-controller.argocd.svc.cluster.local:8080']
+
+  # Longhorn metrics
+  - job_name: 'longhorn-manager'
+    scrape_interval: 60s
+    kubernetes_sd_configs:
+    - role: pod
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_namespace]
+      regex: longhorn-system
+      action: keep
+    - source_labels: [__meta_kubernetes_pod_label_app]
+      regex: longhorn-manager
+      action: keep
+    - source_labels: [__address__]
+      regex: (.+):(.+)
+      target_label: __address__
+      replacement: ${1}:9500
+
+  # NGINX Ingress Controller metrics
+  - job_name: 'nginx-ingress-controller'
+    scrape_interval: 30s
+    kubernetes_sd_configs:
+    - role: pod
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_namespace]
+      regex: ingress-nginx
+      action: keep
+    - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+      regex: ingress-nginx
+      action: keep
+    - source_labels: [__address__]
+      regex: (.+):(.+)
+      target_label: __address__
+      replacement: ${1}:10254
+
+  # Home Assistant metrics (if available)
+  - job_name: 'home-assistant'
+    scrape_interval: 60s
+    static_configs:
+    - targets: ['ha.homeassistant.svc.cluster.local:8123']
+    metrics_path: '/api/prometheus'
+    bearer_token: 'your-home-assistant-token-here'
+    
+  # Homebridge metrics (basic HTTP probe)
+  - job_name: 'homebridge-probe'
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+    - targets: ['homebridge.homebridge.svc.cluster.local:8581']
+    relabel_configs:
+    - source_labels: [__address__]
+      target_label: __param_target
+    - source_labels: [__param_target]
+      target_label: instance
+    - target_label: __address__
+      replacement: prometheus-prometheus-pushgateway.monitoring.svc.cluster.local:9091
+
+  # Mosquitto metrics (if available via exporter)
+  - job_name: 'mosquitto-exporter'
+    scrape_interval: 60s
+    static_configs:
+    - targets: ['mosquitto.mosquitto.svc.cluster.local:9001']  # WebSocket port
+    metrics_path: '/metrics'
+    
+  # Application container metrics via cAdvisor (more detailed)
+  - job_name: 'kubernetes-pods-detailed'
+    scrape_interval: 60s
+    kubernetes_sd_configs:
+    - role: pod
+    relabel_configs:
+    - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+      action: keep
+      regex: true
+    - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+      action: replace
+      target_label: __metrics_path__
+      regex: (.+)
+    - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+      action: replace
+      regex: ([^:]+)(?::\d+)?;(\d+)
+      replacement: $1:$2
+      target_label: __address__
+    - action: labelmap
+      regex: __meta_kubernetes_pod_label_(.+)
+    - source_labels: [__meta_kubernetes_namespace]
+      action: replace
+      target_label: kubernetes_namespace
+    - source_labels: [__meta_kubernetes_pod_name]
+      action: replace
+      target_label: kubernetes_pod_name

@@ -1,3 +1,4 @@
+---
 - name: Install Argo CD using local system
   hosts: localhost
   connection: local

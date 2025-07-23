@@ -47,7 +47,6 @@ alertmanager:
       webhook_configs:
       - url: 'http://localhost:5001/critical'
         send_resolved: true
-        title: 'CRITICAL: {{ range .Alerts }}{{ .Annotations.summary }}{{ end }}'
     
     inhibit_rules:
     - source_match:

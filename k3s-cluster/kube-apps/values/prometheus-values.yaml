@@ -98,27 +98,6 @@ server:
     limits:
       cpu: 1000m      # Increased from 500m for better compaction
       memory: 2Gi     # Increased from 1Gi for stable operation
-  
-  # Additional scrape configurations
-  additionalScrapeConfigs:
-    - job_name: 'argocd-metrics'
-      scrape_interval: 30s
-      static_configs:
-      - targets: 
-        - 'argocd-metrics.argocd.svc.cluster.local:8082'
-        - 'argocd-server-metrics.argocd.svc.cluster.local:8083'
-      relabel_configs:
-      - source_labels: [__address__]
-        regex: 'argocd-(.+)\.argocd\.svc\.cluster\.local:.*'
-        target_label: service
-        replacement: 'argocd-${1}'
-      - target_label: namespace
-        replacement: 'argocd'
-
-    - job_name: 'alertmanager'
-      scrape_interval: 30s
-      static_configs:
-      - targets: ['prometheus-alertmanager.monitoring.svc.cluster.local:9093']
 
 pushgateway:
   enabled: true
@@ -131,7 +110,10 @@ kubeStateMetrics:
 
 serviceMonitorSelectorNilUsesHelmValues: false
 serviceMonitorSelector: {}
-serviceMonitorNamespaceSelector: {}
+serviceMonitorNamespaceSelector:
+  matchNames:
+  - monitoring
+  - monitoring-servicemonitors
 
 # Alerting rules for homelab monitoring
 serverFiles:

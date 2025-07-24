@@ -16,10 +16,10 @@ spec:
         namespace: monitoring
         path: k3s-cluster/kube-apps/charts/loki-stack
         valuesPath: ../../values/loki-stack-values.yaml
-      - name: kube-prometheus-stack
-        namespace: monitoring
-        path: k3s-cluster/kube-apps/charts/kube-prometheus-stack
-        valuesPath: ../../values/kube-prometheus-stack-values.yaml
+      # - name: kube-prometheus-stack
+      #   namespace: monitoring
+      #   path: k3s-cluster/kube-apps/charts/kube-prometheus-stack
+      #   valuesPath: ../../values/kube-prometheus-stack-values.yaml
       - name: ingress-nginx
         namespace: ingress-nginx
         path: k3s-cluster/kube-apps/charts/ingress-nginx

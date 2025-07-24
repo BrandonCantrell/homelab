@@ -98,6 +98,27 @@ server:
     limits:
       cpu: 1000m      # Increased from 500m for better compaction
       memory: 2Gi     # Increased from 1Gi for stable operation
+  
+  # Additional scrape configurations
+  additionalScrapeConfigs:
+    - job_name: 'argocd-metrics'
+      scrape_interval: 30s
+      static_configs:
+      - targets: 
+        - 'argocd-metrics.argocd.svc.cluster.local:8082'
+        - 'argocd-server-metrics.argocd.svc.cluster.local:8083'
+      relabel_configs:
+      - source_labels: [__address__]
+        regex: 'argocd-(.+)\.argocd\.svc\.cluster\.local:.*'
+        target_label: service
+        replacement: 'argocd-${1}'
+      - target_label: namespace
+        replacement: 'argocd'
+
+    - job_name: 'alertmanager'
+      scrape_interval: 30s
+      static_configs:
+      - targets: ['prometheus-alertmanager.monitoring.svc.cluster.local:9093']
 
 pushgateway:
   enabled: true
@@ -206,169 +227,4 @@ serverFiles:
           summary: "ArgoCD application {{ $labels.name }} sync failed"
           description: "Application {{ $labels.name }} has been out of sync for more than 15 minutes"
 
-# Enhanced scrape configs for comprehensive monitoring
-additionalScrapeConfigs:
-  # Node Exporter metrics with proper job name for dashboard compatibility
-  - job_name: 'node-exporter'
-    scrape_interval: 60s
-    kubernetes_sd_configs:
-      - role: endpoints
-    relabel_configs:
-      - source_labels: [__meta_kubernetes_service_name]
-        regex: prometheus-prometheus-node-exporter
-        action: keep
-      - source_labels: [__meta_kubernetes_namespace]
-        regex: monitoring
-        action: keep
-      - action: labelmap
-        regex: __meta_kubernetes_node_label_(.+)
-      - source_labels: [__meta_kubernetes_node_name]
-        target_label: instance
-        
-  - job_name: 'kubernetes-nodes-cadvisor'
-    scrape_interval: 120s   # Reduced frequency for cadvisor (was 60s)
-    scrape_timeout: 10s
-    scheme: https
-    tls_config:
-      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-      insecure_skip_verify: true
-    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-    kubernetes_sd_configs:
-      - role: node
-    relabel_configs:
-      - action: labelmap
-        regex: __meta_kubernetes_node_label_(.+)
-      - target_label: __address__
-        replacement: kubernetes.default.svc:443
-      - source_labels: [__meta_kubernetes_node_name]
-        regex: (.+)
-        target_label: __metrics_path__
-        replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
-    # Drop high-cardinality metrics to reduce storage and improve labeling
-    metric_relabel_configs:
-      - source_labels: [__name__]
-        regex: 'container_cpu_usage_seconds_total|container_memory_working_set_bytes|container_network_receive_bytes_total|container_network_transmit_bytes_total|container_fs_usage_bytes|container_fs_reads_bytes_total|container_fs_writes_bytes_total'
-        action: keep
-      - source_labels: [container]
-        regex: '^$'
-        action: drop
-      # Improve container name readability
-      - source_labels: [pod]
-        regex: '(.+)'
-        target_label: pod_name
-      - source_labels: [container]
-        regex: '(.+)'
-        target_label: container_name
-
-  # ArgoCD metrics collection - static targets
-  - job_name: 'argocd-metrics'
-    scrape_interval: 30s
-    static_configs:
-    - targets: 
-      - 'argocd-metrics.argocd.svc.cluster.local:8082'
-      - 'argocd-server-metrics.argocd.svc.cluster.local:8083'
-    relabel_configs:
-    - source_labels: [__address__]
-      regex: 'argocd-(.+)\.argocd\.svc\.cluster\.local:.*'
-      target_label: service
-      replacement: 'argocd-${1}'
-    - target_label: namespace
-      replacement: 'argocd'
-
-  # AlertManager metrics
-  - job_name: 'alertmanager'
-    scrape_interval: 30s
-    static_configs:
-    - targets: ['prometheus-alertmanager.monitoring.svc.cluster.local:9093']
-
-  # Longhorn metrics
-  - job_name: 'longhorn-manager'
-    scrape_interval: 60s
-    kubernetes_sd_configs:
-    - role: pod
-    relabel_configs:
-    - source_labels: [__meta_kubernetes_namespace]
-      regex: longhorn-system
-      action: keep
-    - source_labels: [__meta_kubernetes_pod_label_app]
-      regex: longhorn-manager
-      action: keep
-    - source_labels: [__address__]
-      regex: (.+):(.+)
-      target_label: __address__
-      replacement: ${1}:9500
-
-  # NGINX Ingress Controller metrics
-  - job_name: 'nginx-ingress-controller'
-    scrape_interval: 30s
-    kubernetes_sd_configs:
-    - role: pod
-    relabel_configs:
-    - source_labels: [__meta_kubernetes_namespace]
-      regex: ingress-nginx
-      action: keep
-    - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
-      regex: ingress-nginx
-      action: keep
-    - source_labels: [__address__]
-      regex: (.+):(.+)
-      target_label: __address__
-      replacement: ${1}:10254
-
-  # Home Assistant metrics (if available)
-  - job_name: 'home-assistant'
-    scrape_interval: 60s
-    static_configs:
-    - targets: ['ha.homeassistant.svc.cluster.local:8123']
-    metrics_path: '/api/prometheus'
-    bearer_token: 'your-home-assistant-token-here'
-    
-  # Homebridge metrics (basic HTTP probe)
-  - job_name: 'homebridge-probe'
-    scrape_interval: 60s
-    metrics_path: /probe
-    params:
-      module: [http_2xx]
-    static_configs:
-    - targets: ['homebridge.homebridge.svc.cluster.local:8581']
-    relabel_configs:
-    - source_labels: [__address__]
-      target_label: __param_target
-    - source_labels: [__param_target]
-      target_label: instance
-    - target_label: __address__
-      replacement: prometheus-prometheus-pushgateway.monitoring.svc.cluster.local:9091
-
-  # Mosquitto metrics (if available via exporter)
-  - job_name: 'mosquitto-exporter'
-    scrape_interval: 60s
-    static_configs:
-    - targets: ['mosquitto.mosquitto.svc.cluster.local:9001']  # WebSocket port
-    metrics_path: '/metrics'
-    
-  # Application container metrics via cAdvisor (more detailed)
-  - job_name: 'kubernetes-pods-detailed'
-    scrape_interval: 60s
-    kubernetes_sd_configs:
-    - role: pod
-    relabel_configs:
-    - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-      action: keep
-      regex: true
-    - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
-      action: replace
-      target_label: __metrics_path__
-      regex: (.+)
-    - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-      action: replace
-      regex: ([^:]+)(?::\d+)?;(\d+)
-      replacement: $1:$2
-      target_label: __address__
-    - action: labelmap
-      regex: __meta_kubernetes_pod_label_(.+)
-    - source_labels: [__meta_kubernetes_namespace]
-      action: replace
-      target_label: kubernetes_namespace
-    - source_labels: [__meta_kubernetes_pod_name]
-      action: replace
-      target_label: kubernetes_pod_name
+# Note: Additional scrape configs moved to server.additionalScrapeConfigs section above

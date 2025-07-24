@@ -52,9 +52,15 @@ prometheus:
         - prometheus.opsguy.io
         secretName: wildcard-opsguy-io-tls
 
-# Disable AlertManager to reduce resource usage
+# Completely disable AlertManager to reduce resource usage
 alertmanager:
   enabled: false
+  alertmanagerSpec:
+    replicas: 0
+  ingress:
+    enabled: false
+  serviceMonitor:
+    enabled: false
 
 # Grafana with built-in alerting configuration
 grafana:

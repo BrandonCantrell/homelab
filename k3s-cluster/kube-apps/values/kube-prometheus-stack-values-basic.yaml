@@ -55,6 +55,7 @@ prometheus:
 # Completely disable AlertManager to reduce resource usage
 alertmanager:
   enabled: false
+  forceDeployDashboards: false
   alertmanagerSpec:
     replicas: 0
   ingress:

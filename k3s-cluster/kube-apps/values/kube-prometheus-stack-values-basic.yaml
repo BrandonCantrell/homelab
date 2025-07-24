@@ -71,6 +71,10 @@ grafana:
     storageClassName: longhorn
     size: 5Gi
   
+  # Use Recreate strategy for RWO volumes to avoid multi-attach errors
+  deploymentStrategy:
+    type: Recreate
+  
   # Basic ingress
   ingress:
     enabled: true

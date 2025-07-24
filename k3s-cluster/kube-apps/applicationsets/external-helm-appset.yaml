@@ -19,7 +19,7 @@ spec:
       - name: kube-prometheus-stack
         namespace: monitoring
         path: k3s-cluster/kube-apps/charts/kube-prometheus-stack
-        valuesPath: ../../values/kube-prometheus-stack-values.yaml
+        valuesPath: ../../values/kube-prometheus-stack-values-basic.yaml
       - name: ingress-nginx
         namespace: ingress-nginx
         path: k3s-cluster/kube-apps/charts/ingress-nginx

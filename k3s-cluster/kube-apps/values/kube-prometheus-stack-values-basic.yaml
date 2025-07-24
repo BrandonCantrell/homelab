@@ -1,0 +1,111 @@
+---
+# Basic kube-prometheus-stack configuration
+# Following official documentation and best practices
+
+# Global settings
+fullnameOverride: ""
+
+# Skip CRD installation (we installed them manually)
+crds:
+  enabled: false
+
+# Basic Prometheus configuration
+prometheus:
+  prometheusSpec:
+    # Basic storage
+    retention: 15d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 10Gi
+    
+    # Basic resource limits
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
+    
+    # ServiceMonitor discovery - basic setup
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+    
+  # Basic ingress
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus.opsguy.io
+    tls:
+      - hosts:
+        - prometheus.opsguy.io
+        secretName: wildcard-opsguy-io-tls
+
+# Basic AlertManager configuration
+alertmanager:
+  alertmanagerSpec:
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 2Gi
+  
+  # Basic ingress
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - alertmanager.opsguy.io
+    tls:
+      - hosts:
+        - alertmanager.opsguy.io
+        secretName: wildcard-opsguy-io-tls
+
+# Basic Grafana configuration
+grafana:
+  # Set admin password
+  adminPassword: omghai2u
+  
+  # Basic persistence
+  persistence:
+    enabled: true
+    storageClassName: longhorn
+    size: 5Gi
+  
+  # Basic ingress
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.opsguy.io
+    tls:
+      - hosts:
+        - grafana.opsguy.io
+        secretName: wildcard-opsguy-io-tls
+  
+  # Basic resource limits
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+# Keep default node exporter
+nodeExporter:
+  enabled: true
+
+# Keep default kube-state-metrics
+kubeStateMetrics:
+  enabled: true

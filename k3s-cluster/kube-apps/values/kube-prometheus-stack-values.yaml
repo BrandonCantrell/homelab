@@ -43,10 +43,8 @@ prometheus:
     # Additional scrape configs and tweaks
     additionalScrapeConfigs: []
     
-    # WAL compression and other optimizations
+    # Block duration optimizations (removing managed args)
     additionalArgs:
-      - name: web.enable-lifecycle
-      - name: storage.tsdb.wal-compression
       - name: storage.tsdb.min-block-duration
         value: 2h
       - name: storage.tsdb.max-block-duration

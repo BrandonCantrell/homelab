@@ -45,10 +45,12 @@ prometheus:
     
     # WAL compression and other optimizations
     additionalArgs:
-      - --web.enable-lifecycle
-      - --storage.tsdb.wal-compression
-      - --storage.tsdb.min-block-duration=2h
-      - --storage.tsdb.max-block-duration=24h
+      - name: web.enable-lifecycle
+      - name: storage.tsdb.wal-compression
+      - name: storage.tsdb.min-block-duration
+        value: 2h
+      - name: storage.tsdb.max-block-duration
+        value: 24h
 
   # Ingress for Prometheus
   ingress:

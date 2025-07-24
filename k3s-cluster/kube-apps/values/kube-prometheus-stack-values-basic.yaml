@@ -65,9 +65,6 @@ alertmanager:
 
 # Grafana with built-in alerting configuration
 grafana:
-  # Set admin password
-  adminPassword: omghai2u
-  
   # Basic persistence
   persistence:
     enabled: true

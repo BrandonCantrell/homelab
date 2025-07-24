@@ -2,6 +2,10 @@
 # Global configuration
 fullnameOverride: ""
 
+# CRD configuration - install CRDs with the chart
+crds:
+  enabled: true
+
 # Prometheus configuration
 prometheus:
   prometheusSpec:

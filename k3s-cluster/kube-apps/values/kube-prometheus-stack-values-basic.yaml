@@ -23,14 +23,14 @@ prometheus:
             requests:
               storage: 10Gi
     
-    # Reduced resource limits for Pi cluster
+    # Balanced resource limits for Pi cluster - increased memory for stability
     resources:
       requests:
         cpu: 100m
-        memory: 256Mi
-      limits:
-        cpu: 300m
         memory: 512Mi
+      limits:
+        cpu: 500m
+        memory: 1Gi
     
     # ServiceMonitor discovery - basic setup
     serviceMonitorSelectorNilUsesHelmValues: false

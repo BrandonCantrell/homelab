@@ -63,6 +63,7 @@ alertmanager:
   serviceMonitor:
     enabled: false
 
+
 # Grafana with built-in alerting configuration
 grafana:
   # Basic persistence
@@ -101,6 +102,17 @@ grafana:
       enabled: true
     feature_toggles:
       enable: "ngalert"
+  
+  # Add Loki datasource
+  additionalDataSources:
+    - name: "Loki"
+      type: loki
+      uid: loki
+      url: http://loki-stack.monitoring:3100/
+      access: proxy
+      isDefault: false
+      jsonData:
+        maxLines: 1000
 
 # Keep default node exporter
 nodeExporter:

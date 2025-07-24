@@ -2,9 +2,9 @@
 # Global configuration
 fullnameOverride: ""
 
-# CRD configuration - install CRDs with the chart
+# CRD configuration - skip CRD installation (install manually)
 crds:
-  enabled: true
+  enabled: false
 
 # Prometheus configuration
 prometheus:

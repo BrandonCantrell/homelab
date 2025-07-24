@@ -260,22 +260,20 @@ additionalScrapeConfigs:
         regex: '(.+)'
         target_label: container_name
 
-  # ArgoCD metrics collection - using proper service discovery
+  # ArgoCD metrics collection - static targets
   - job_name: 'argocd-metrics'
     scrape_interval: 30s
-    kubernetes_sd_configs:
-    - role: endpoints
-      namespaces:
-        names:
-        - argocd
+    static_configs:
+    - targets: 
+      - 'argocd-metrics.argocd.svc.cluster.local:8082'
+      - 'argocd-server-metrics.argocd.svc.cluster.local:8083'
     relabel_configs:
-    - source_labels: [__meta_kubernetes_service_name]
-      regex: argocd-(metrics|server-metrics|repo-server)
-      action: keep
-    - source_labels: [__meta_kubernetes_service_name]
+    - source_labels: [__address__]
+      regex: 'argocd-(.+)\.argocd\.svc\.cluster\.local:.*'
       target_label: service
-    - source_labels: [__meta_kubernetes_namespace]
-      target_label: namespace
+      replacement: 'argocd-${1}'
+    - target_label: namespace
+      replacement: 'argocd'
 
   # AlertManager metrics
   - job_name: 'alertmanager'

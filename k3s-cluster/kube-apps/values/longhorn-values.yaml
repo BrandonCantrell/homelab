@@ -9,6 +9,21 @@ persistence:
 defaultSettings:
   defaultReplicaCount: 1
 
+# Optimize CSI components for 2-node cluster
+csi:
+  attacher:
+    replicaCount: 2
+  provisioner:
+    replicaCount: 2
+  resizer:
+    replicaCount: 2
+  snapshotter:
+    replicaCount: 2
+
+# Reduce UI replicas
+longhornUI:
+  replicas: 1
+
 # This is the ingress configuration from the original application
 ingress:
   enabled: true

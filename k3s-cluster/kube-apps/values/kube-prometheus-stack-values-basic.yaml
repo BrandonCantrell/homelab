@@ -23,14 +23,14 @@ prometheus:
             requests:
               storage: 10Gi
     
-    # Basic resource limits
+    # Reduced resource limits for Pi cluster
     resources:
       requests:
-        cpu: 200m
-        memory: 512Mi
+        cpu: 100m
+        memory: 256Mi
       limits:
-        cpu: 500m
-        memory: 1Gi
+        cpu: 300m
+        memory: 512Mi
     
     # ServiceMonitor discovery - basic setup
     serviceMonitorSelectorNilUsesHelmValues: false
@@ -93,14 +93,14 @@ grafana:
         - grafana.opsguy.io
         secretName: wildcard-opsguy-io-tls
   
-  # Basic resource limits
+  # Reduced resource limits for Pi cluster
   resources:
     requests:
-      cpu: 100m
-      memory: 256Mi
+      cpu: 50m
+      memory: 128Mi
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 200m
+      memory: 256Mi
 
 # Keep default node exporter
 nodeExporter:

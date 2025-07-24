@@ -94,10 +94,8 @@ grafana:
       cpu: 200m
       memory: 256Mi
   
-  # Enable Grafana alerting and disable external alertmanager
+  # Enable Grafana unified alerting (legacy alerting removed in v11+)
   grafana.ini:
-    alerting:
-      enabled: true
     unified_alerting:
       enabled: true
     feature_toggles:

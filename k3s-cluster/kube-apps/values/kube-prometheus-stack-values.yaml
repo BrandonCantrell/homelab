@@ -147,7 +147,7 @@ grafana:
       cpu: 500m
       memory: 1Gi
   
-  # Datasources (Prometheus will be auto-configured)
+  # Datasources (Prometheus will be auto-configured as default)
   additionalDataSources:
   - name: Loki
     type: loki

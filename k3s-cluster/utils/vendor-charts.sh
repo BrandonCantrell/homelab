@@ -14,7 +14,7 @@ CHARTS=(
   "cert-manager https://charts.jetstack.io 1.13.2 "
   "loki-stack https://grafana.github.io/helm-charts 2.9.10"
   "grafana https://grafana.github.io/helm-charts 6.58.8"
-  "prometheus https://prometheus-community.github.io/helm-charts 22.6.7"
+  "kube-prometheus-stack https://prometheus-community.github.io/helm-charts 65.1.0"
   "promtail https://grafana.github.io/helm-charts 6.15.0"
 )
 

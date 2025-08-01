@@ -58,30 +58,69 @@ dashboardProviders:
 
 dashboards:
   default:
+    # Node Exporter Full - most reliable and widely used
+    node-exporter-full:
+      gnetId: 1860
+      revision: 37
+      datasource: Prometheus
+    
+    # Kubernetes cluster monitoring - modern and well-maintained
     kubernetes-cluster:
       gnetId: 7249
       revision: 1
       datasource: Prometheus
-    node-exporter:
-      gnetId: 1860
-      revision: 27
+    
+    # K3s specific dashboard - optimized for K3s
+    k3s-cluster:
+      gnetId: 15282
+      revision: 1
       datasource: Prometheus
+    
+    # Kubernetes Pod Resources - detailed pod monitoring
+    kubernetes-pods:
+      gnetId: 6417
+      revision: 1
+      datasource: Prometheus
+    
+    # Container monitoring via cAdvisor
+    cadvisor-dashboard:
+      gnetId: 14282
+      revision: 1
+      datasource: Prometheus
+    
+    # ArgoCD monitoring - uses different metrics
+    argocd-dashboard:
+      gnetId: 14584
+      revision: 1
+      datasource: Prometheus
+    
+    # Loki logs dashboard
     loki-logs:
       gnetId: 13639
-      revision: 1
+      revision: 2
       datasource: Loki
-    loki-dashboard:
-      gnetId: 15145
+    
+    # AlertManager dashboard - simpler one
+    alertmanager:
+      gnetId: 9578
+      revision: 4
+      datasource: Prometheus
+      
+    # Container overview with better naming
+    container-overview:
+      gnetId: 11600
       revision: 1
-      datasource: Loki
+      datasource: Prometheus
 
 resources:
   requests:
-    cpu: 100m
-    memory: 128Mi
-  limits:
     cpu: 200m
-    memory: 256Mi
+    memory: 512Mi
+  limits:
+    cpu: 500m
+    memory: 1Gi
 
 serviceMonitor:
   enabled: true
+
+###

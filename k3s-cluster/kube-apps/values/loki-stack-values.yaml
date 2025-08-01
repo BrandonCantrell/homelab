@@ -34,3 +34,12 @@ loki:
       ring:
         kvstore:
           store: inmemory
+  
+  # Resource limits for stable operation
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 1Gi

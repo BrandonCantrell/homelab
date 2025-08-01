@@ -1,0 +1,146 @@
+---
+# Basic kube-prometheus-stack configuration
+# Following official documentation and best practices
+
+# Global settings
+fullnameOverride: ""
+
+# Skip CRD installation (we installed them manually)
+crds:
+  enabled: false
+
+# Basic Prometheus configuration
+prometheus:
+  prometheusSpec:
+    # Minimal storage for Pi cluster
+    retention: 7d
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: longhorn
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 5Gi
+    
+    # Reduced resource limits for Pi cluster
+    resources:
+      requests:
+        cpu: 100m
+        memory: 384Mi
+      limits:
+        cpu: 400m
+        memory: 768Mi
+    
+    # ServiceMonitor discovery - basic setup
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    serviceMonitorNamespaceSelector: {}
+    
+    # Performance optimizations for Pi cluster
+    scrapeInterval: 30s
+    evaluationInterval: 30s
+    
+  # Basic ingress
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - prometheus.opsguy.io
+    tls:
+      - hosts:
+        - prometheus.opsguy.io
+        secretName: wildcard-opsguy-io-tls
+
+# Completely disable AlertManager to reduce resource usage
+alertmanager:
+  enabled: false
+  forceDeployDashboards: false
+  alertmanagerSpec:
+    replicas: 0
+  ingress:
+    enabled: false
+  serviceMonitor:
+    enabled: false
+
+
+# Grafana with built-in alerting configuration
+grafana:
+  # Basic persistence
+  persistence:
+    enabled: true
+    storageClassName: longhorn
+    size: 5Gi
+  
+  # Use Recreate strategy for RWO volumes to avoid multi-attach errors
+  deploymentStrategy:
+    type: Recreate
+  
+  # Basic ingress
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - grafana.opsguy.io
+    tls:
+      - hosts:
+        - grafana.opsguy.io
+        secretName: wildcard-opsguy-io-tls
+  
+  # Reduced resource limits for Pi cluster
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+  
+  # Enable Grafana unified alerting (legacy alerting removed in v11+)
+  grafana.ini:
+    unified_alerting:
+      enabled: true
+    feature_toggles:
+      enable: "ngalert"
+  
+  # Add Loki datasource
+  additionalDataSources:
+    - name: "Loki"
+      type: loki
+      uid: loki
+      url: http://loki-stack.monitoring:3100/
+      access: proxy
+      isDefault: false
+      jsonData:
+        maxLines: 1000
+
+# Keep default node exporter
+nodeExporter:
+  enabled: true
+
+# Optimize kube-state-metrics for Pi cluster
+kubeStateMetrics:
+  enabled: true
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+# Disable default prometheus rules to reduce resource usage
+defaultRules:
+  create: false
+
+# Disable some resource-intensive monitoring
+kubeApiServer:
+  enabled: false
+kubeControllerManager:
+  enabled: false  
+kubeScheduler:
+  enabled: false
+kubeProxy:
+  enabled: false
+kubeEtcd:
+  enabled: false

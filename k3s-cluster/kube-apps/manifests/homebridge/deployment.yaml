@@ -8,6 +8,8 @@ metadata:
     app: homebridge
 spec:
   replicas: 1
+  strategy:
+    type: Recreate  # Prevents multi-attach errors with RWO volumes
   selector:
     matchLabels:
       app: homebridge
@@ -15,6 +17,10 @@ spec:
     metadata:
       labels:
         app: homebridge
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8581"
+        prometheus.io/path: "/"
     spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet

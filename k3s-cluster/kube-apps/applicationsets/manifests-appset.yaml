@@ -37,7 +37,7 @@ spec:
       project: default
       source:
         repoURL: https://github.com/BrandonCantrell/homelab.git
-        targetRevision: helm-refactor
+        targetRevision: develop
         path: '{{path}}'
       destination:
         server: https://kubernetes.default.svc
